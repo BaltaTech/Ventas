@@ -1,22 +1,25 @@
 ﻿using Application.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
     public interface IProductoService
     {
-        // Agregamos el parámetro aquí para que coincida con el ProductoService
+        // 1. Obtiene solo los productos que la empresa tiene permitido vender
+        // (Aquí es donde se aplica el filtro de Trane vs Todas las marcas)
         Task<IEnumerable<ProductoDto>> ObtenerTodos(int empresaId);
 
+        // 2. Buscamos por int porque así está en el Dominio
         Task<ProductoDto> ObtenerPorId(int id);
 
-        // Corregimos el nombre a productoDto (estaba como productoDtp)
+        // 3. Crear un producto nuevo desde el panel de administración
         Task Crear(ProductoDto productoDto);
 
-        // Definimos que puede hacer el usuario 
+        // --- MÉTODOS ADICIONALES RECOMENDADOS PARA TU FLUJO ---
+
+        // 4. Útil para que el vendedor filtre rápidamente por capacidad (BTU/Tonelaje)
+        Task<IEnumerable<ProductoDto>> ObtenerPorFiltroTecnico(int empresaId, string tipoEquipo);
+
+        // 5. Para actualizar precios o descripciones
+        Task Actualizar(ProductoDto productoDto);
     }
 }

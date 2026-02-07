@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Application.Mappings; // Asegúrate de que apunte a tu perfil de mapeo
-
+using Application.Mappings;
+using Application.Interfaces; // IMPORTANTE: Agrega esto
+using Application.Services;
 namespace Application;
 
 public static class InyeccionDependencias
@@ -15,7 +16,8 @@ public static class InyeccionDependencias
             cfg.AddProfile<MappingProfile>(); // Reemplaza 'MappingProfile' por el nombre de tu clase de perfiles
         }, Assembly.GetExecutingAssembly());
 
-        services.AddScoped<Interfaces.IProductoService, Services.ProductoService>();
+        services.AddScoped<IProductoService, ProductoService>();
+        services.AddScoped<IProspectoService, ProspectoService>(); // <--- Esto ya no debería marcar error
 
         return services;
     }
