@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs
+namespace Application.DTOs;
+
+public class EmpresaDto
 {
-    internal class EmpresaDto
-    {
-    }
+    public int Id { get; set; }
+    public string RazonSocial { get; set; } = string.Empty;
 }

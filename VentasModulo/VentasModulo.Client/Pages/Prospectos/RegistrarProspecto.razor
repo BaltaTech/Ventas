@@ -1,5 +1,94 @@
-﻿<h3>Component</h3>
+﻿@page "/prospectos/registrar"
+@using Application.DTOs
+@using Application.Interfaces
+@using Domain.Enums
+@inject IProspectoService ProspectoService
+@inject IEmpresaService EmpresaService
+@inject IUsuarioService UsuarioService
+@inject NavigationManager Navigation
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Nuevo Registro de Prospecto</h5>
+                </div>
+                <div class="card-body p-4">
+                    <EditForm Model="prospecto" OnValidSubmit="Guardar" FormName="formularioRegistroProspecto">
+                        <DataAnnotationsValidator />
+
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Nombre del Cliente / Empresa</label>
+                                <InputText @bind-Value="prospecto.NombreCliente" class="form-control" />
+                                <ValidationMessage For="@(() => prospecto.NombreCliente)" class="text-danger small" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Teléfono</label>
+                                <InputText @bind-Value="prospecto.Telefono" class="form-control" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Correo</label>
+                                <InputText @bind-Value="prospecto.Correo" class="form-control" />
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-primary">Empresa Destino</label>
+                                <InputSelect @bind-Value="prospecto.EmpresaId" class="form-select border-primary">
+                                    <option value="0">-- Seleccione Empresa --</option>
+                                    @foreach (var emp in empresas)
+                                    {
+                                        <option value="@emp.Id">@emp.RazonSocial</option>
+                                    }
+                                </InputSelect>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-primary">Vendedor Asignado</label>
+                                <InputSelect @bind-Value="prospecto.VendedorId" class="form-select border-primary">
+                                    <option value="@Guid.Empty">-- Seleccione Vendedor --</option>
+                                    @foreach (var vend in vendedores)
+                                    {
+                                        <option value="@vend.Id">@vend.NombreCompleto</option>
+                                    }
+                                </InputSelect>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary px-5">Guardar Registro</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
+    // Agregamos este atributo para que Blazor reciba los datos del formulario correctamente
+    [SupplyParameterFromForm]
+    public ProspectoDto prospecto { get; set; } = new();
 
+    private IEnumerable<EmpresaDto> empresas = new List<EmpresaDto>();
+    private IEnumerable<UsuarioDto> vendedores = new List<UsuarioDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargamos los catálogos para los dropdowns
+        empresas = await EmpresaService.ObtenerEmpresasHabilitadas();
+        vendedores = await UsuarioService.ObtenerVendedoresActivos();
+    }
+
+    // Cambiamos el nombre a 'Guardar' para que coincida con el OnValidSubmit de arriba
+    private async Task Guardar()
+    {
+        await ProspectoService.Crear(prospecto);
+        Navigation.NavigateTo("/"); // Redirigir al inicio o a la lista
+    }
 }

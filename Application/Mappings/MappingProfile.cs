@@ -41,6 +41,10 @@ namespace Application.Mappings
                 // Nos aseguramos de mapear los IDs de relación
                 .ForMember(dest => dest.EmpresaId, opt => opt.MapFrom(src => src.EmpresaId))
                 .ForMember(dest => dest.VendedorId, opt => opt.MapFrom(src => src.VendedorId));
+
+
+            CreateMap<Empresa, EmpresaDto>();
+            CreateMap<Usuario, UsuarioDto>();
         }
     }
 }

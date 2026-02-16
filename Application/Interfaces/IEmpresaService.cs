@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.DTOs;
 
 namespace Application.Interfaces
 {
-    internal interface IEmpresaService
+    public interface IEmpresaService
     {
+        Task<IEnumerable<EmpresaDto>> ObtenerEmpresasHabilitadas();
     }
 }

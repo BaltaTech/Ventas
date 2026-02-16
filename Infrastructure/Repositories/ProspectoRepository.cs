@@ -44,5 +44,14 @@ namespace Infrastructure.Repositories
         {
             return await _context.Prospectos.FindAsync(id);
         }
+
+        public async Task<IEnumerable<Prospecto>> GetAllAsync()
+        {
+            // Esto traerá todos los registros (incluyendo a Saul Baltazar)
+            return await _context.Prospectos
+                .Include(p => p.Empresa)  // Para traer la Razon Social
+                .Include(p => p.Vendedor) // Para traer el nombre del vendedor
+                .ToListAsync();
+        }
     }
 }

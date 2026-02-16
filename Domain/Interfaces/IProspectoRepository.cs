@@ -17,5 +17,7 @@ namespace Domain.Interfaces
         Task UpdateAsync(Prospecto prospecto);
 
         Task<Prospecto?> GetByIdAsync(Guid id);
+
+        Task<IEnumerable<Prospecto>> GetAllAsync();
     }
 }

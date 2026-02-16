@@ -1,0 +1,109 @@
+﻿@page "/prospectos/lista"
+@using Application.DTOs
+@using Application.Interfaces
+@inject IProspectoService ProspectoService
+@inject NavigationManager Navigation
+
+<div class="container-fluid mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0"><i class="bi bi-wind me-2"></i>Seguimiento de Aire Acondicionado</h5>
+            @* Corrección de los paréntesis aquí *@
+            <button class="btn btn-success btn-sm" @onclick='() => Navigation.NavigateTo("/prospectos/registrar")'>
+                <i class="bi bi-plus-circle me-1"></i> Nuevo Registro
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cliente / Equipo</th>
+                            <th>Contacto</th>
+                            <th>Empresa</th>
+                            <th>Vendedor</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (prospectos == null)
+                        {
+                            <tr><td colspan="7" class="text-center">Cargando datos...</td></tr>
+                        }
+                        else if (!prospectos.Any())
+                        {
+                            <tr><td colspan="7" class="text-center text-muted">No hay prospectos registrados.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in prospectos)
+                            {
+                                <tr>
+                                    <td>@item.FechaRegistro.ToShortDateString()</td>
+                                    <td>
+                                        <span class="fw-bold">@item.NombreCliente</span><br />
+                                        <small class="text-primary">@(item.NotasRecepcion ?? "Sin detalles de equipo")</small>
+                                    </td>
+                                    <td>
+                                        <small><i class="bi bi-telephone"></i> @item.Telefono</small><br />
+                                        <small><i class="bi bi-envelope"></i> @item.Correo</small>
+                                    </td>
+                                    <td><span class="badge border border-primary text-primary">@item.RazonSocial</span></td>
+                                    <td>@item.NombreVendedor</td>
+                                    <td>
+                                        @if (item.Atendido)
+                                        {
+                                            <span class="badge bg-success">Atendido</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">Pendiente</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline-success btn-sm" @onclick="() => MarcarAtendido(item.Id)">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // El '?' permite que sea nulo al inicio y evita el error CS8618
+    private IEnumerable<ProspectoDto>? prospectos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        try
+        {
+            // CAMBIO IMPORTANTE: Usamos ObtenerTodos() sin parámetros
+            prospectos = await ProspectoService.ObtenerTodos();
+        }
+        catch (Exception ex)
+        {
+            // Si el método aún no existe, inicializamos lista vacía para que no truene
+            prospectos = new List<ProspectoDto>();
+            Console.WriteLine($"Error al cargar: {ex.Message}");
+        }
+    }
+
+    private async Task MarcarAtendido(Guid id)
+    {
+        // Por ahora solo refrescamos, luego implementamos el cambio en BD
+        await CargarDatos();
+    }
+}

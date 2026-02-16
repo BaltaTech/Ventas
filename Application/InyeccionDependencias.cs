@@ -18,6 +18,8 @@ public static class InyeccionDependencias
 
         services.AddScoped<IProductoService, ProductoService>();
         services.AddScoped<IProspectoService, ProspectoService>(); // <--- Esto ya no debería marcar error
+        services.AddScoped<IEmpresaService, EmpresaService>();
+        services.AddScoped<IUsuarioService, UsuarioService>();
 
         return services;
     }

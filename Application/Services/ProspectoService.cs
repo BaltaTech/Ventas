@@ -1,8 +1,9 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
-using Domain.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Interfaces;
+using System.Net.Http;
 
 namespace Application.Services
 {
@@ -36,6 +37,30 @@ namespace Application.Services
             var pendientes = prospectos.Where(p => !p.Atendido);
 
             return _mapper.Map<IEnumerable<ProspectoDto>>(pendientes);
+        }
+
+        public async Task<IEnumerable<ProspectoDto>> ObtenerTodosPorEmpresa(int empresaId)
+        {
+            var prospectos = await _repository.GetByEmpresaIdAsync(empresaId);
+            return _mapper.Map<IEnumerable<ProspectoDto>>(prospectos);
+        }
+
+        public async Task MarcarComoAtendido(Guid prospectoId)
+        {
+            var prospecto = await _repository.GetByIdAsync(prospectoId);
+            if (prospecto != null)
+            {
+                prospecto.Atendido = true;
+                await _repository.UpdateAsync(prospecto);
+            }
+        }
+        public async Task<IEnumerable<ProspectoDto>> ObtenerTodos()
+        {
+            // 1. Pedimos todos los prospectos al repositorio (Base de datos)
+            var prospectosEntities = await _repository.GetAllAsync(); // O el método que tengas en tu repositorio
+
+            // 2. Usamos el mapper para convertir las entidades a DTOs
+            return _mapper.Map<IEnumerable<ProspectoDto>>(prospectosEntities);
         }
     }
 }

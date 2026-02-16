@@ -20,6 +20,8 @@ public static class DependencyInjection
 
         // AGREGAMOS ESTA LÍNEA: Es el "puente" para que ProspectoService pueda guardar datos
         services.AddScoped<IProspectoRepository, ProspectoRepository>();
+        services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
         return services;
     }

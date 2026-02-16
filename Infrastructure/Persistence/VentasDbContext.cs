@@ -12,6 +12,7 @@ namespace Infrastructure.Persistence
         public DbSet<Producto> Productos => Set<Producto>();
         // Agregamos Prospectos para el registro de leads
         public DbSet<Prospecto> Prospectos => Set<Prospecto>();
+        public DbSet<Usuario> Usuarios => Set<Usuario>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

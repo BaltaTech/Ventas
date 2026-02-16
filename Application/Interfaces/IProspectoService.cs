@@ -6,5 +6,8 @@ namespace Application.Interfaces
     {
         Task Crear(ProspectoDto prospectoDto);
         Task<IEnumerable<ProspectoDto>> ObtenerPendientesPorVendedor(Guid vendedorId);
+        Task<IEnumerable<ProspectoDto>> ObtenerTodosPorEmpresa(int empresaId);
+        Task MarcarComoAtendido(Guid prospectoId);
+        Task<IEnumerable<ProspectoDto>> ObtenerTodos(); // <-- AGREGA ESTA LÍNEA
     }
 }

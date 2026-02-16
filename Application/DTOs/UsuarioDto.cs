@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTOs
+namespace Application.DTOs;
+
+public class UsuarioDto
 {
-    internal class UsuarioDto
-    {
-    }
+    public Guid Id { get; set; }
+    public string NombreCompleto { get; set; } = string.Empty;
 }
