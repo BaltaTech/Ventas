@@ -6,18 +6,43 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        @* Barra superior mejorada: Quitamos el link de Microsoft y ponemos contexto del sistema *@
+        <div class="top-row px-4 d-flex justify-content-between align-items-center">
+            <div class="d-none d-md-block">
+                <span class="text-muted fw-light">
+                    <i class="bi bi-clock-history me-1"></i> @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                </span>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="badge rounded-pill bg-primary px-3 py-2 me-3 shadow-sm">
+                    <i class="bi bi-shield-lock-fill me-1"></i> Sesión Activa
+                </span>
+                <a href="#" class="text-decoration-none text-dark fw-bold">
+                    <i class="bi bi-person-circle fs-5 me-1"></i> Usuario
+                </a>
+            </div>
         </div>
 
+        @* El cuerpo de tus páginas ahora tendrá un contenedor más limpio *@
         <article class="content px-4">
-            @Body
+            <div class="container-fluid py-3">
+                @Body
+            </div>
         </article>
     </main>
 </div>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+@* Alerta de error con diseño moderno de Bootstrap *@
+<div id="blazor-error-ui" class="alert alert-warning border-2 border-warning shadow-lg fixed-bottom m-4" style="display:none; z-index: 2000;">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+        <div class="flex-grow-1">
+            <strong>¡Vaya! Algo salió mal.</strong>
+            <p class="mb-0 small text-muted">La aplicación detectó un error inesperado.</p>
+        </div>
+        <div class="ms-3">
+            <a href="" class="reload btn btn-warning btn-sm fw-bold me-2">Recargar App</a>
+            <button class="dismiss btn btn-outline-dark btn-sm">Cerrar</button>
+        </div>
+    </div>
 </div>

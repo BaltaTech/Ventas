@@ -1,7 +1,130 @@
 ﻿@page "/"
+@using Application.DTOs
+@using Application.Interfaces
+@inject IProspectoService ProspectoService
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dashboard - VentasModulo</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold text-primary">Panel de Control HVAC</h1>
+            <p class="lead text-muted">Gestión de prospectos y seguimiento de ventas de aire acondicionado.</p>
+        </div>
+    </div>
 
-Welcome to your new app.
+    @if (estaCargando)
+    {
+        <div class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando estadísticas...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 bg-warning bg-opacity-10 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h6 class="text-warning text-uppercase fw-bold">Pendientes</h6>
+                        <h2 class="display-4 fw-bold">@totalPendientes</h2>
+                        <i class="bi bi-clock-history text-warning fs-3"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 bg-success bg-opacity-10 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h6 class="text-success text-uppercase fw-bold">Atendidos</h6>
+                        <h2 class="display-4 fw-bold">@totalAtendidos</h2>
+                        <i class="bi bi-check-circle-fill text-success fs-3"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 bg-primary bg-opacity-10 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h6 class="text-primary text-uppercase fw-bold">Total Leads</h6>
+                        <h2 class="display-4 fw-bold">@totalGeneral</h2>
+                        <i class="bi bi-people-fill text-primary fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow border-0 h-100 card-action" @onclick='() => Navigation.NavigateTo("prospectos/lista")'>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box bg-dark text-white p-3 rounded-3 me-3">
+                            <i class="bi bi-list-stars fs-3"></i>
+                        </div>
+                        <h4 class="mb-0">Ver Seguimiento</h4>
+                    </div>
+                    <p class="text-muted">Gestiona la lista completa de clientes y marca los atendidos.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow border-0 h-100 card-action" @onclick='() => Navigation.NavigateTo("prospectos/registrar")'>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box bg-primary text-white p-3 rounded-3 me-3">
+                            <i class="bi bi-person-plus-fill fs-3"></i>
+                        </div>
+                        <h4 class="mb-0">Nuevo Registro</h4>
+                    </div>
+                    <p class="text-muted">Captura los datos de un nuevo interesado en equipos de clima.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-action {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+        .card-action:hover {
+            transform: translateY(-5px);
+            background-color: #f8f9fa;
+        }
+</style>
+
+@code {
+    private int totalPendientes;
+    private int totalAtendidos;
+    private int totalGeneral;
+    private bool estaCargando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var prospectos = await ProspectoService.ObtenerTodos();
+            if (prospectos != null)
+            {
+                totalGeneral = prospectos.Count();
+                totalAtendidos = prospectos.Count(p => p.Atendido);
+                totalPendientes = totalGeneral - totalAtendidos;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error cargando estadísticas: {ex.Message}");
+        }
+        finally
+        {
+            estaCargando = false;
+        }
+    }
+}
