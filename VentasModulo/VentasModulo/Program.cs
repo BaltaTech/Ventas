@@ -1,5 +1,5 @@
 using Application;
-using VentasModulo.Client.Pages;
+using VentasModulo.Client.Layout;
 using VentasModulo.Components;
 using Infrastructure;
 
@@ -37,6 +37,5 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(VentasModulo.Client._Imports).Assembly);
-
+.AddAdditionalAssemblies(typeof(VentasModulo.Client.Routes).Assembly);
 app.Run();

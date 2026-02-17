@@ -7,6 +7,11 @@
 @inject IUsuarioService UsuarioService
 @inject NavigationManager Navigation
 
+@* IMPORTANTE: Esta línea habilita que el C# se ejecute en el navegador. 
+   Sin esto, los botones no harán nada al hacer clic. 
+*@
+@rendermode InteractiveWebAssembly
+
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -15,30 +20,35 @@
                     <h5 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Nuevo Registro de Prospecto</h5>
                 </div>
                 <div class="card-body p-4">
+                    @* EditForm gestiona la validación y el envío. 
+                       OnValidSubmit solo se dispara si todos los campos pasan las reglas de DataAnnotations. 
+                    *@
                     <EditForm Model="prospecto" OnValidSubmit="Guardar" FormName="formularioRegistroProspecto">
                         <DataAnnotationsValidator />
 
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <label class="form-label fw-bold">Nombre del Cliente / Empresa</label>
-                                <InputText @bind-Value="prospecto.NombreCliente" class="form-control" />
+                                <label class="form-label fw-bold">Nombre del Cliente / Empresa 👤</label>
+                                <InputText @bind-Value="prospecto.NombreCliente" class="form-control" placeholder="Ej. Constructora Global" />
                                 <ValidationMessage For="@(() => prospecto.NombreCliente)" class="text-danger small" />
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Teléfono</label>
+                                <label class="form-label fw-bold">Teléfono 📞</label>
                                 <InputText @bind-Value="prospecto.Telefono" class="form-control" />
+                                <ValidationMessage For="@(() => prospecto.Telefono)" class="text-danger small" />
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Correo</label>
+                                <label class="form-label fw-bold">Correo 📧</label>
                                 <InputText @bind-Value="prospecto.Correo" class="form-control" />
+                                <ValidationMessage For="@(() => prospecto.Correo)" class="text-danger small" />
                             </div>
 
                             <hr class="my-4" />
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-primary">Empresa Destino</label>
+                                <label class="form-label fw-bold text-primary">Empresa Destino 🏢</label>
                                 <InputSelect @bind-Value="prospecto.EmpresaId" class="form-select border-primary">
                                     <option value="0">-- Seleccione Empresa --</option>
                                     @foreach (var emp in empresas)
@@ -46,10 +56,11 @@
                                         <option value="@emp.Id">@emp.RazonSocial</option>
                                     }
                                 </InputSelect>
+                                <ValidationMessage For="@(() => prospecto.EmpresaId)" class="text-danger small" />
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-primary">Vendedor Asignado</label>
+                                <label class="form-label fw-bold text-primary">Vendedor Asignado 🤝</label>
                                 <InputSelect @bind-Value="prospecto.VendedorId" class="form-select border-primary">
                                     <option value="@Guid.Empty">-- Seleccione Vendedor --</option>
                                     @foreach (var vend in vendedores)
@@ -57,11 +68,14 @@
                                         <option value="@vend.Id">@vend.NombreCompleto</option>
                                     }
                                 </InputSelect>
+                                <ValidationMessage For="@(() => prospecto.VendedorId)" class="text-danger small" />
                             </div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            <button type="submit" class="btn btn-primary px-5">Guardar Registro</button>
+                            <button type="submit" class="btn btn-primary px-5 shadow-sm">
+                                <i class="bi bi-save me-2"></i>Guardar Registro
+                            </button>
                         </div>
                     </EditForm>
                 </div>
@@ -71,7 +85,6 @@
 </div>
 
 @code {
-    // Agregamos este atributo para que Blazor reciba los datos del formulario correctamente
     [SupplyParameterFromForm]
     public ProspectoDto prospecto { get; set; } = new();
 
@@ -80,15 +93,30 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Cargamos los catálogos para los dropdowns
-        empresas = await EmpresaService.ObtenerEmpresasHabilitadas();
-        vendedores = await UsuarioService.ObtenerVendedoresActivos();
+        try
+        {
+            // Cargamos los catálogos desde la API
+            empresas = await EmpresaService.ObtenerEmpresasHabilitadas();
+            vendedores = await UsuarioService.ObtenerVendedoresActivos();
+        }
+        catch (Exception ex)
+        {
+            // Aquí podrías registrar el error si la API no responde
+            Console.WriteLine($"Error al cargar catálogos: {ex.Message}");
+        }
     }
 
-    // Cambiamos el nombre a 'Guardar' para que coincida con el OnValidSubmit de arriba
     private async Task Guardar()
     {
-        await ProspectoService.Crear(prospecto);
-        Navigation.NavigateTo("/"); // Redirigir al inicio o a la lista
+        try
+        {
+            await ProspectoService.Crear(prospecto);
+            Navigation.NavigateTo("/"); // Redirigir al inicio tras éxito
+        }
+        catch (Exception ex)
+        {
+            // Manejo simple de error para evitar el crash de la página
+            Console.WriteLine($"Error al guardar: {ex.Message}");
+        }
     }
 }

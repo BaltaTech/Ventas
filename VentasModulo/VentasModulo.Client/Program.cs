@@ -7,5 +7,8 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 // Registramos nuestro servicio de API
 builder.Services.AddScoped<IProspectoService, ProspectoApiClient>();
+builder.Services.AddScoped<IProspectoService, ProspectoApiClient>();
+builder.Services.AddScoped<IEmpresaService, EmpresaApiClient>();
+builder.Services.AddScoped<IUsuarioService, UsuarioApiClient>();
 
 await builder.Build().RunAsync();

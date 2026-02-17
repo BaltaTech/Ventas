@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using VentasModulo.Client
+@using VentasModulo.Client.Layout
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -13,7 +15,7 @@
 </head>
 
 <body>
-    <Routes />
+    <Routes @rendermode="InteractiveWebAssembly" />
     <script src="_framework/blazor.web.js"></script>
 </body>
 

@@ -22,6 +22,14 @@ namespace VentasModulo.Controllers
             _usuarioService = usuarioService;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProspectoDto>>> Get()
+        {
+            // El controlador le pide los datos al servicio del servidor
+            var prospectos = await _prospectoService.ObtenerTodos();
+            return Ok(prospectos);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProspectoDto prospectoDto)
         {
