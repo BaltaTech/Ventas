@@ -53,5 +53,23 @@ namespace Infrastructure.Repositories
                 .Include(p => p.Vendedor) // Para traer el nombre del vendedor
                 .ToListAsync();
         }
+
+        public async Task MarcarComoAtendido(Guid prospectoId)
+        {
+            // Buscamos el registro
+            var prospecto = await _context.Prospectos.FindAsync(prospectoId);
+
+            if (prospecto != null)
+            {
+                // Cambiamos el valor
+                prospecto.Atendido = true;
+
+                // Avisamos a EF que solo cambió esa columna (más eficiente)
+                _context.Entry(prospecto).Property(x => x.Atendido).IsModified = true;
+
+                // Guardamos en SQL
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -19,5 +19,10 @@ namespace Domain.Interfaces
         Task<Prospecto?> GetByIdAsync(Guid id);
 
         Task<IEnumerable<Prospecto>> GetAllAsync();
+
+        // --- NUEVO MÉTODO PARA RESOLVER EL ERROR ---
+        // Este método permite al Service llamar a la implementación 
+        // optimizada que ya escribiste en el repositorio.
+        Task MarcarComoAtendido(Guid prospectoId);
     }
 }

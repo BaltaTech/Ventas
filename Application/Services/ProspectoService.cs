@@ -3,7 +3,6 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using System.Net.Http;
 
 namespace Application.Services
 {
@@ -20,10 +19,7 @@ namespace Application.Services
 
         public async Task Crear(ProspectoDto prospectoDto)
         {
-            // Aquí ocurre la magia: convertimos el DTO a la Entidad
             var prospecto = _mapper.Map<Prospecto>(prospectoDto);
-
-            // Asignamos la fecha actual automáticamente
             prospecto.FechaRegistro = DateTime.Now;
             prospecto.Atendido = false;
 
@@ -33,9 +29,7 @@ namespace Application.Services
         public async Task<IEnumerable<ProspectoDto>> ObtenerPendientesPorVendedor(Guid vendedorId)
         {
             var prospectos = await _repository.GetByVendedorIdAsync(vendedorId);
-            // Solo devolvemos los que no han sido atendidos
             var pendientes = prospectos.Where(p => !p.Atendido);
-
             return _mapper.Map<IEnumerable<ProspectoDto>>(pendientes);
         }
 
@@ -45,21 +39,16 @@ namespace Application.Services
             return _mapper.Map<IEnumerable<ProspectoDto>>(prospectos);
         }
 
+        // VERSION OPTIMIZADA: Delegamos la responsabilidad al Repositorio
         public async Task MarcarComoAtendido(Guid prospectoId)
         {
-            var prospecto = await _repository.GetByIdAsync(prospectoId);
-            if (prospecto != null)
-            {
-                prospecto.Atendido = true;
-                await _repository.UpdateAsync(prospecto);
-            }
+            // Ya no buscamos el objeto aquí, dejamos que el Repo lo haga en una sola transacción
+            await _repository.MarcarComoAtendido(prospectoId);
         }
+
         public async Task<IEnumerable<ProspectoDto>> ObtenerTodos()
         {
-            // 1. Pedimos todos los prospectos al repositorio (Base de datos)
-            var prospectosEntities = await _repository.GetAllAsync(); // O el método que tengas en tu repositorio
-
-            // 2. Usamos el mapper para convertir las entidades a DTOs
+            var prospectosEntities = await _repository.GetAllAsync();
             return _mapper.Map<IEnumerable<ProspectoDto>>(prospectosEntities);
         }
     }

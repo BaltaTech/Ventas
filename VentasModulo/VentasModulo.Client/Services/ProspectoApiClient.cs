@@ -15,40 +15,48 @@ public class ProspectoApiClient : IProspectoService
 
     public async Task Crear(ProspectoDto prospectoDto)
     {
-        await _http.PostAsJsonAsync("api/prospectos", prospectoDto);
+        var response = await _http.PostAsJsonAsync("api/prospectos", prospectoDto);
+        response.EnsureSuccessStatusCode();
     }
 
-    // --- NUEVO MÉTODO PARA LA LISTA ---
     public async Task<IEnumerable<ProspectoDto>> ObtenerTodos()
     {
-        // Esto traerá a Saul Baltazar y todos los registros de aire acondicionado
         return await _http.GetFromJsonAsync<IEnumerable<ProspectoDto>>("api/prospectos")
                ?? new List<ProspectoDto>();
     }
 
-    public async Task<IEnumerable<EmpresaDto>> ObtenerEmpresasHabilitadas()
+    public async Task MarcarComoAtendido(Guid prospectoId)
     {
-        return await _http.GetFromJsonAsync<IEnumerable<EmpresaDto>>("api/prospectos/empresas") ?? new List<EmpresaDto>();
+        // Usamos PUT porque estamos actualizando un recurso existente
+        // Enviamos un contenido vacío (new { }) ya que el ID va en la URL
+        var response = await _http.PutAsJsonAsync($"api/prospectos/{prospectoId}/atender", new { });
+
+        // Es buena práctica verificar que el servidor respondió correctamente
+        response.EnsureSuccessStatusCode();
     }
 
-    public async Task<IEnumerable<UsuarioDto>> ObtenerVendedoresActivos()
-    {
-        return await _http.GetFromJsonAsync<IEnumerable<UsuarioDto>>("api/prospectos/vendedores") ?? new List<UsuarioDto>();
-    }
-
-    // Implementaciones básicas para evitar errores de compilación
     public async Task<IEnumerable<ProspectoDto>> ObtenerPendientesPorVendedor(Guid vendedorId)
     {
-        return await _http.GetFromJsonAsync<IEnumerable<ProspectoDto>>($"api/prospectos/vendedor/{vendedorId}") ?? new List<ProspectoDto>();
+        return await _http.GetFromJsonAsync<IEnumerable<ProspectoDto>>($"api/prospectos/vendedor/{vendedorId}")
+               ?? new List<ProspectoDto>();
     }
 
     public async Task<IEnumerable<ProspectoDto>> ObtenerTodosPorEmpresa(int empresaId)
     {
-        return await _http.GetFromJsonAsync<IEnumerable<ProspectoDto>>($"api/prospectos/empresa/{empresaId}") ?? new List<ProspectoDto>();
+        return await _http.GetFromJsonAsync<IEnumerable<ProspectoDto>>($"api/prospectos/empresa/{empresaId}")
+               ?? new List<ProspectoDto>();
     }
 
-    public async Task MarcarComoAtendido(Guid prospectoId)
+    // Métodos auxiliares para los combos del formulario
+    public async Task<IEnumerable<EmpresaDto>> ObtenerEmpresasHabilitadas()
     {
-        await _http.PutAsJsonAsync($"api/prospectos/{prospectoId}/atender", new { });
+        return await _http.GetFromJsonAsync<IEnumerable<EmpresaDto>>("api/prospectos/empresas")
+               ?? new List<EmpresaDto>();
+    }
+
+    public async Task<IEnumerable<UsuarioDto>> ObtenerVendedoresActivos()
+    {
+        return await _http.GetFromJsonAsync<IEnumerable<UsuarioDto>>("api/prospectos/vendedores")
+               ?? new List<UsuarioDto>();
     }
 }
