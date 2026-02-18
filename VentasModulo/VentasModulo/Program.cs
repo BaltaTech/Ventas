@@ -1,7 +1,11 @@
 using Application;
+using Application.Interfaces;
+using Application.Services;
+using Domain.Interfaces;
+using Infrastructure;
+using Infrastructure.Repositories;
 using VentasModulo.Client.Layout;
 using VentasModulo.Components;
-using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+// Program.cs (Server)
 
 // Asegúrate de que también esté esta línea (normalmente ya viene)
 builder.Services.AddControllers();

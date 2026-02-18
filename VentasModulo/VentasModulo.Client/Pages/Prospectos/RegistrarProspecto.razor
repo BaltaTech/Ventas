@@ -3,16 +3,17 @@
 @using Application.DTOs
 @using Application.Interfaces
 @using Domain.Enums
-@inject IUsuarioService UsuarioService
 @namespace VentasModulo.Client.Pages.Prospectos
 @inject IProspectoService ProspectoService
+@inject IUsuarioService UsuarioService
+@inject IEmpresaService EmpresaService
 @inject NavigationManager Navigation
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card shadow-lg border-0">
-                @* Encabezado con estilo industrial/HVAC *@
+                @* Encabezado *@
                 <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
                     <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Nuevo Registro de Cliente</h4>
                     <span class="badge bg-primary px-3">Recepción</span>
@@ -73,25 +74,39 @@
 
                             @* --- SECCIÓN: ASIGNACIÓN Y NOTAS --- *@
                             <div class="col-md-5">
-                                <h6 class="text-primary fw-bold mb-3"><i class="bi bi-clipboard-check me-2"></i>Asignación Interna</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="text-primary fw-bold mb-0"><i class="bi bi-clipboard-check me-2"></i>Asignación</h6>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AbrirModalVendedor">
+                                        <i class="bi bi-plus-circle"></i> Nuevo Vendedor
+                                    </button>
+                                </div>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Vendedor Asignado</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                        <InputText @bind-Value="prospecto.NombreVendedor" class="form-control" placeholder="Nombre del vendedor" />
+                                        <InputSelect @bind-Value="prospecto.VendedorId" class="form-select border-primary shadow-sm">
+                                            <option value="">-- Seleccionar Vendedor --</option>
+                                            @if (vendedores != null)
+                                            {
+                                                @foreach (var v in vendedores)
+                                                {
+                                                    <option value="@v.Id">@v.NombreCompleto</option>
+                                                }
+                                            }
+                                        </InputSelect>
                                     </div>
+                                    <ValidationMessage For="@(() => prospecto.VendedorId)" class="text-danger small" />
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-info">
-                                        <i class="bi bi-chat-left-dots-fill me-1"></i>Notas de Recepción / Requerimiento
+                                        <i class="bi bi-chat-left-dots-fill me-1"></i>Notas de Recepción
                                     </label>
                                     <InputTextArea @bind-Value="prospecto.NotasRecepcion"
                                                    class="form-control shadow-sm border-info"
                                                    rows="6"
-                                                   placeholder="Describa el equipo solicitado: Toneladas, tipo (Inverter, Paquete), marca de preferencia, urgencia de instalación..." />
-                                    <div class="form-text mt-2"><i class="bi bi-info-circle me-1"></i>Esta nota es vital para el vendedor.</div>
+                                                   placeholder="Describa el equipo solicitado: Toneladas, tipo..." />
                                 </div>
                             </div>
                         </div>
@@ -120,45 +135,146 @@
     </div>
 </div>
 
+@* --- MODAL PARA NUEVO VENDEDOR --- *@
+@if (mostrarModalVendedor)
+{
+    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Registrar Nuevo Vendedor</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModalVendedor"></button>
+                </div>
+                <EditForm Model="@nuevoUsuario" OnValidSubmit="GuardarVendedor">
+                    <div class="modal-body">
+                        @* CLAVE: Selector de Empresa para evitar error de FK *@
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Asignar a Empresa (Razón Social)</label>
+                            <InputSelect @bind-Value="nuevoUsuario.EmpresaId" class="form-select border-primary">
+                                <option value="0">-- Seleccione Empresa --</option>
+                                @if (listaEmpresas != null)
+                                {
+                                    @foreach (var emp in listaEmpresas)
+                                    {
+                                        <option value="@emp.Id">@emp.RazonSocial</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nombre Completo</label>
+                            <InputText @bind-Value="nuevoUsuario.NombreCompleto" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Correo Electrónico</label>
+                            <InputText @bind-Value="nuevoUsuario.CorreoElectronico" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" @onclick="CerrarModalVendedor">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Vendedor</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private ProspectoDto prospecto = new ProspectoDto();
+    private UsuarioDto nuevoUsuario = new UsuarioDto();
+    private IEnumerable<UsuarioDto>? vendedores;
+    private IEnumerable<EmpresaDto>? listaEmpresas;
     private bool enviando = false;
+    private bool mostrarModalVendedor = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Inicializar valores por defecto para evitar nulos en el DTO
         prospecto.FechaRegistro = DateTime.Now;
         prospecto.Atendido = false;
-        prospecto.Origen = OrigenProspecto.LlamadaTelefonica; // O el valor que prefieras por defecto
-
-        // El EmpresaId lo puedes dejar en 1 o manejarlo según tu lógica
+        prospecto.Origen = OrigenProspecto.LlamadaTelefonica;
         prospecto.EmpresaId = 1;
+
+        await CargarVendedores();
+        await CargarEmpresas();
+    }
+
+    private async Task CargarVendedores()
+    {
+        try
+        {
+            vendedores = await UsuarioService.ObtenerVendedoresActivos();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar vendedores: {ex.Message}");
+        }
+    }
+
+    private async Task CargarEmpresas()
+    {
+        try
+        {
+            // Asumiendo que tu IEmpresaService tiene este método para cargar las 2 razones sociales
+            listaEmpresas = await EmpresaService.ObtenerEmpresasHabilitadas();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar empresas: {ex.Message}");
+        }
     }
 
     private async Task Guardar()
     {
         if (enviando) return;
-
         try
         {
             enviando = true;
-
-            // Aseguramos que la fecha sea la del momento exacto del clic
             prospecto.FechaRegistro = DateTime.Now;
-
             await ProspectoService.Crear(prospecto);
-
-            // Regresamos a la tabla que ya tienes funcionando
             Navigation.NavigateTo("/prospectos/lista");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al intentar guardar: {ex.Message}");
-            // Aquí podrías agregar una notificación visual de error si tienes alguna librería de Toast
+            Console.WriteLine($"Error al intentar guardar prospecto: {ex.Message}");
         }
         finally
         {
             enviando = false;
+        }
+    }
+
+    private void AbrirModalVendedor()
+    {
+        nuevoUsuario = new UsuarioDto { EmpresaId = 1 }; // Valor por defecto
+        mostrarModalVendedor = true;
+    }
+
+    private void CerrarModalVendedor() => mostrarModalVendedor = false;
+
+    private async Task GuardarVendedor()
+    {
+        if (nuevoUsuario.EmpresaId == 0)
+        {
+            Console.WriteLine("Debe seleccionar una empresa válida.");
+            return;
+        }
+
+        try
+        {
+            // El servidor ahora recibirá el EmpresaId correcto, evitando el error 400
+            await UsuarioService.CrearVendedor(nuevoUsuario);
+
+            mostrarModalVendedor = false;
+            nuevoUsuario = new UsuarioDto();
+
+            await CargarVendedores();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al guardar vendedor: {ex.Message}");
         }
     }
 }

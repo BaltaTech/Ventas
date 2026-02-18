@@ -17,6 +17,6 @@ builder.Services.AddScoped(sp => new HttpClient
 builder.Services.AddScoped<IProspectoService, ProspectoApiClient>();
 builder.Services.AddScoped<IEmpresaService, EmpresaApiClient>();
 builder.Services.AddScoped<IUsuarioService, UsuarioApiClient>();
-
+// Archivo: VentasModulo.Client/Program.cs
 // 3. Iniciar la aplicación
 await builder.Build().RunAsync();

@@ -2,7 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
-using Domain.Interfaces; // Asumiendo que crearás IUsuarioRepository
+using Domain.Interfaces;
 using Domain.Enums;
 
 namespace Application.Services
@@ -20,14 +20,25 @@ namespace Application.Services
 
         public async Task<IEnumerable<UsuarioDto>> ObtenerVendedoresActivos()
         {
-            // Traemos todos los usuarios desde el repositorio
             var usuarios = await _usuarioRepository.GetAllAsync();
 
-            // Filtramos por el departamento de Ventas definido en tu Enum
+            // Filtramos por Ventas
             var vendedores = usuarios.Where(u => u.Departamento == Departamento.Ventas);
 
-            // Mapeamos a DTO para enviar solo lo necesario a la UI (Id y Nombre)
             return _mapper.Map<IEnumerable<UsuarioDto>>(vendedores);
+        }
+
+        // AGREGA ESTE MÉTODO PARA QUITAR EL ERROR DE INTERFAZ
+        public async Task CrearVendedor(UsuarioDto usuarioDto)
+        {
+            // Mapeamos el DTO a la Entidad de Dominio
+            var nuevoUsuario = _mapper.Map<Usuario>(usuarioDto);
+
+            // Asignamos el departamento por defecto para que aparezca en la lista después
+            nuevoUsuario.Departamento = Departamento.Ventas;
+            nuevoUsuario.Id = Guid.NewGuid(); // Aseguramos que tenga un ID nuevo
+
+            await _usuarioRepository.AddAsync(nuevoUsuario);
         }
     }
 }

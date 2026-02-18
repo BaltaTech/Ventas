@@ -66,5 +66,22 @@ namespace VentasModulo.Controllers
             var vendedores = await _usuarioService.ObtenerVendedoresActivos();
             return Ok(vendedores);
         }
+
+        [HttpPost("vendedores")]
+        public async Task<IActionResult> PostVendedor([FromBody] UsuarioDto usuarioDto)
+        {
+            if (usuarioDto == null) return BadRequest();
+
+            try
+            {
+                // Esto llama al servicio que ya tiene el mapeo y el AddAsync
+                await _usuarioService.CrearVendedor(usuarioDto);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Error al crear vendedor: {ex.Message}" });
+            }
+        }
     }
 }

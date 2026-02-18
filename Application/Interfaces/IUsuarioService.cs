@@ -6,5 +6,6 @@ namespace Application.Interfaces
     {
         // Este método filtrará solo a los usuarios del Departamento.Ventas
         Task<IEnumerable<UsuarioDto>> ObtenerVendedoresActivos();
+        Task CrearVendedor(UsuarioDto usuarioDto);
     }
 }

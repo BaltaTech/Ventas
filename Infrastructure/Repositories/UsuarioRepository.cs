@@ -1,19 +1,29 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Persistence;
+using Infrastructure.Persistence; // Asegúrate de que este sea el namespace de tu DbContext
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
     public class UsuarioRepository : IUsuarioRepository
     {
         private readonly VentasDbContext _context;
-        public UsuarioRepository(VentasDbContext context) => _context = context;
-        public async Task<IEnumerable<Usuario>> GetAllAsync() => await _context.Usuarios.ToListAsync();
+
+        public UsuarioRepository(VentasDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Usuario>> GetAllAsync()
+        {
+            return await _context.Usuarios.ToListAsync();
+        }
+
+        // IMPLEMENTA ESTE MÉTODO PARA QUITAR EL ERROR
+        public async Task AddAsync(Usuario usuario)
+        {
+            await _context.Usuarios.AddAsync(usuario);
+            await _context.SaveChangesAsync(); // Importante para persistir en SQL
+        }
     }
 }

@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(VentasDbContext))]
-    partial class VentasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218173326_AgregarCorreoAUsuario")]
+    partial class AgregarCorreoAUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,20 +43,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Empresas");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            RazonSocial = "AYC S.A. DE C.V.",
-                            VendeTodasLasMarcas = false
-                        },
-                        new
-                        {
-                            Id = 2,
-                            RazonSocial = "GRUPO AYC S.A. DE C.V.",
-                            VendeTodasLasMarcas = true
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Marca", b =>

@@ -46,7 +46,7 @@ namespace Application.Mappings
             // 3. OTROS MAPEOS
             // ==========================================
             CreateMap<Empresa, EmpresaDto>();
-            CreateMap<Usuario, UsuarioDto>();
+            CreateMap<Usuario, UsuarioDto>().ReverseMap();
         }
     }
 }
