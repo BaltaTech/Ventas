@@ -10,233 +10,500 @@
 @inject NavigationManager Navigation
 
 <style>
-    .glass-card {
-        background: rgba(255, 255, 255, 0.95);
-        border: none;
-        border-radius: 15px;
+    /* Estilos premium con paleta corporativa moderna */
+    .page-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
     }
 
-    .form-label-custom {
-        font-size: 0.85rem;
+    .premium-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .premium-card:hover {
+            box-shadow: 0 30px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+    .header-premium {
+        background: linear-gradient(145deg, #1a2639 0%, #2c3e50 100%);
+        color: white;
+        border-radius: 24px 24px 0 0;
+        padding: 2rem 2rem 1.5rem;
+        margin: -1px -1px 0 -1px;
+    }
+
+    .section-title {
+        font-size: 0.9rem;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 1.5px;
         color: #6c757d;
-        margin-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-left: 1rem;
     }
 
-    .input-group-text-custom {
-        background-color: #f8f9fa;
-        border-right: none;
-        color: #0d6efd;
-    }
-
-    .form-control-custom {
-        border-left: none;
-        padding: 0.75rem;
-    }
-
-        .form-control-custom:focus {
-            box-shadow: none;
-            border-color: #dee2e6;
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #0d6efd, #0099ff);
+            border-radius: 4px;
         }
 
-    .btn-gradient-primary {
-        background: linear-gradient(45deg, #0d6efd, #0043a8);
+    .input-premium {
+        border: 2px solid #e9ecef;
+        border-radius: 14px;
+        padding: 0.75rem 1.2rem;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: white;
+    }
+
+        .input-premium:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+            outline: none;
+        }
+
+    .input-group-premium {
+        border: 2px solid #e9ecef;
+        border-radius: 14px;
+        overflow: hidden;
+        transition: all 0.2s ease;
+    }
+
+        .input-group-premium:focus-within {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .input-group-premium .input-group-text {
+            background: white;
+            border: none;
+            color: #0d6efd;
+            font-size: 1.1rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .input-group-premium .form-control {
+            border: none;
+            padding: 0.75rem 1rem 0.75rem 0;
+        }
+
+            .input-group-premium .form-control:focus {
+                box-shadow: none;
+            }
+
+    .select-premium {
+        border: 2px solid #e9ecef;
+        border-radius: 14px;
+        padding: 0.75rem 1.2rem;
+        font-size: 0.95rem;
+        background: white url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") no-repeat right 1rem center/16px 12px;
+        appearance: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .select-premium:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+            outline: none;
+        }
+
+    .textarea-premium {
+        border: 2px solid #e9ecef;
+        border-radius: 14px;
+        padding: 1rem;
+        font-size: 0.95rem;
+        resize: vertical;
+        min-height: 140px;
+        transition: all 0.2s ease;
+    }
+
+        .textarea-premium:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+            outline: none;
+        }
+
+    .badge-premium {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-premium-primary {
+        background: linear-gradient(145deg, #0d6efd, #0b5ed7);
         border: none;
-        transition: transform 0.2s;
+        border-radius: 100px;
+        padding: 0.9rem 2.5rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: white;
+        box-shadow: 0 8px 16px -4px rgba(13, 110, 253, 0.3);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
-        .btn-gradient-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        .btn-premium-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
         }
+
+        .btn-premium-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-premium-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -4px rgba(13, 110, 253, 0.4);
+        }
+
+        .btn-premium-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-premium-primary:disabled {
+            opacity: 0.7;
+            transform: none;
+            box-shadow: none;
+        }
+
+    .btn-premium-secondary {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 100px;
+        padding: 0.9rem 2rem;
+        font-weight: 500;
+        color: #495057;
+        transition: all 0.2s ease;
+    }
+
+        .btn-premium-secondary:hover {
+            border-color: #0d6efd;
+            color: #0d6efd;
+            background: #f8f9fa;
+        }
+
+    .assignment-card {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 24px;
+        padding: 1.5rem;
+        border: 1px solid rgba(13, 110, 253, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .assignment-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+    .modal-premium {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+        animation: modalFadeIn 0.3s ease;
+    }
+
+    .modal-content-premium {
+        border: none;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 40px 70px -15px rgba(0, 0, 0, 0.4);
+        animation: modalSlideUp 0.4s ease;
+    }
+
+    @@keyframes modalFadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes modalSlideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .floating-label {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+        .floating-label input {
+            height: 3.5rem;
+            padding-top: 1.2rem;
+        }
+
+        .floating-label label {
+            position: absolute;
+            left: 1rem;
+            top: 0.9rem;
+            font-size: 0.9rem;
+            color: #adb5bd;
+            transition: all 0.2s ease;
+            pointer-events: none;
+        }
+
+        .floating-label input:focus ~ label,
+        .floating-label input:not(:placeholder-shown) ~ label {
+            top: 0.3rem;
+            font-size: 0.7rem;
+            color: #0d6efd;
+        }
+
+    .stats-badge {
+        background: #e7f5ff;
+        color: #0d6efd;
+        padding: 0.4rem 1rem;
+        border-radius: 100px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .validation-message {
+        font-size: 0.75rem;
+        margin-top: 0.3rem;
+        padding-left: 1rem;
+        color: #dc3545;
+    }
 </style>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-xl-11">
-            <EditForm Model="@prospecto" OnValidSubmit="Guardar">
-                <DataAnnotationsValidator />
+<div class="page-container">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-xl-11">
+                <EditForm Model="@prospecto" OnValidSubmit="Guardar">
+                    <DataAnnotationsValidator />
 
-                @* HEADER *@
-                <div class="d-flex align-items-center justify-content-between mb-4">
-                    <div>
-                        <h2 class="fw-bold text-dark mb-1">Recepción de Leads</h2>
-                        <p class="text-muted">Registro centralizado para prospección comercial</p>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" @onclick='() => Navigation.NavigateTo("/prospectos/lista")'>
-                            <i class="bi bi-arrow-left me-2"></i>Volver
-                        </button>
-                        <button type="submit" class="btn btn-gradient-primary text-white px-5 rounded-pill shadow-sm" disabled="@enviando">
-                            @if (enviando)
-                            {
-                                <span class="spinner-border spinner-border-sm me-2"></span>
-                            }
-                            else
-                            {
-                                <i class="bi bi-cloud-check-fill me-2"></i>
-                            
-                                <span>Finalizar Registro</span>
-                            }
-                        </button>
-                    </div>
-                </div>
-
-                <div class="row g-4">
-                    @* COLUMNA IZQUIERDA: CLIENTE *@
-                    <div class="col-lg-8">
-                        <div class="card glass-card shadow-sm h-100">
-                            <div class="card-body p-4">
-                                <h5 class="card-title mb-4 d-flex align-items-center">
-                                    <span class="bg-primary-subtle text-primary p-2 rounded-3 me-3">
-                                        <i class="bi bi-person-badge fs-4"></i>
+                    @* HEADER PREMIUM *@
+                    <div class="premium-card mb-4">
+                        <div class="header-premium d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <span class="badge-premium">
+                                        <i class="bi bi-lightning-charge-fill"></i>
+                                        Nuevo Lead
                                     </span>
-                                    Información del Cliente
-                                </h5>
+                                    <span class="stats-badge">
+                                        <i class="bi bi-calendar-check"></i>
+                                        @DateTime.Now.ToString("dd MMM yyyy")
+                                    </span>
+                                </div>
+                                <h1 class="display-6 fw-bold mb-1">Recepción de Leads</h1>
+                                <p class="text-white-50 mb-0">Registro centralizado para prospección comercial</p>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn-premium-secondary d-flex align-items-center gap-2" @onclick='() => Navigation.NavigateTo("/prospectos/lista")'>
+                                    <i class="bi bi-arrow-left"></i>
+                                    <span>Volver</span>
+                                </button>
+                                <button type="submit" class="btn-premium-primary d-flex align-items-center gap-2" disabled="@enviando">
+                                    @if (enviando)
+                                    {
+                                        <span class="spinner-border spinner-border-sm"></span>
+                                        <span>Procesando...</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-check2-circle"></i>
+                                        <span>Finalizar Registro</span>
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <label class="form-label-custom">Nombre o Razón Social</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text input-group-text-custom"><i class="bi bi-building"></i></span>
-                                            <InputText @bind-Value="prospecto.NombreCliente" class="form-control form-control-custom" placeholder="Ej. Constructora Delta S.A." />
-                                        </div>
-                                        <ValidationMessage For="@(() => prospecto.NombreCliente)" class="text-danger x-small" />
+                    <div class="row g-4">
+                        @* COLUMNA IZQUIERDA: CLIENTE *@
+                        <div class="col-lg-8">
+                            <div class="premium-card h-100">
+                                <div class="p-4">
+                                    <div class="section-title d-flex align-items-center justify-content-between">
+                                        <span>Información del Cliente</span>
+                                        <span class="text-primary-emphasis bg-primary-subtle px-3 py-1 rounded-pill fs-7">
+                                            <i class="bi bi-pencil-square me-1"></i>Datos requeridos
+                                        </span>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label-custom">WhatsApp / Teléfono</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text input-group-text-custom"><i class="bi bi-whatsapp"></i></span>
-                                            <InputText @bind-Value="prospecto.Telefono" class="form-control form-control-custom" placeholder="664 000 0000" />
+                                    <div class="row g-4">
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold text-secondary mb-2">Nombre o Razón Social</label>
+                                            <div class="input-group input-group-premium">
+                                                <span class="input-group-text"><i class="bi bi-buildings"></i></span>
+                                                <InputText @bind-Value="prospecto.NombreCliente" class="form-control" placeholder="Ej. Constructora Delta S.A. / Juan Pérez" />
+                                            </div>
+                                            <ValidationMessage For="@(() => prospecto.NombreCliente)" class="validation-message" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-secondary mb-2">
+                                                <i class="bi bi-whatsapp text-success me-1"></i>WhatsApp / Teléfono
+                                            </label>
+                                            <div class="input-group input-group-premium">
+                                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                                <InputText @bind-Value="prospecto.Telefono" class="form-control" placeholder="664 123 4567" />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-secondary mb-2">
+                                                <i class="bi bi-envelope text-primary me-1"></i>Correo Electrónico
+                                            </label>
+                                            <div class="input-group input-group-premium">
+                                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                                <InputText @bind-Value="prospecto.Correo" class="form-control" placeholder="contacto@cliente.com" />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-secondary mb-2">
+                                                <i class="bi bi-diagram-3 text-info me-1"></i>Origen de Contacto
+                                            </label>
+                                            <InputSelect @bind-Value="prospecto.Origen" class="select-premium">
+                                                @foreach (var val in Enum.GetValues(typeof(OrigenProspecto)))
+                                                {
+                                                    <option value="@val">@val</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-secondary mb-2">
+                                                <i class="bi bi-receipt text-warning me-1"></i>Razón Social (Facturación)
+                                            </label>
+                                            <InputText @bind-Value="prospecto.RazonSocial" class="input-premium w-100" placeholder="Opcional - Para facturación" />
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label-custom">Correo Electrónico</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text input-group-text-custom"><i class="bi bi-envelope-at"></i></span>
-                                            <InputText @bind-Value="prospecto.Correo" class="form-control form-control-custom" placeholder="contacto@cliente.com" />
-                                        </div>
+                        @* COLUMNA DERECHA: ASIGNACIÓN Y NOTAS *@
+                        <div class="col-lg-4">
+                            <div class="premium-card mb-4">
+                                <div class="assignment-card">
+                                    <div class="d-flex align-items-center gap-2 mb-4">
+                                        <span class="bg-primary bg-opacity-10 p-2 rounded-3">
+                                            <i class="bi bi-person-plus text-primary fs-5"></i>
+                                        </span>
+                                        <h6 class="fw-bold mb-0">Asignación Directa</h6>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label-custom text-success">Origen de Contacto</label>
-                                        <InputSelect @bind-Value="prospecto.Origen" class="form-select p-3 bg-light border-0">
-                                            @foreach (var val in Enum.GetValues(typeof(OrigenProspecto)))
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold text-secondary mb-2">Vendedor Asignado</label>
+                                        <InputSelect @bind-Value="prospecto.VendedorId" class="select-premium">
+                                            <option value="">— Seleccionar vendedor —</option>
+                                            @if (vendedores != null)
                                             {
-                                                <option value="@val">@val</option>
+                                                @foreach (var v in vendedores)
+                                                {
+                                                    <option value="@v.Id">@v.NombreCompleto</option>
+                                                }
                                             }
                                         </InputSelect>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label-custom">Razón Social para Factura</label>
-                                        <InputText @bind-Value="prospecto.RazonSocial" class="form-control p-3 bg-light border-0" placeholder="Opcional" />
+                                    <button type="button" class="btn w-100 py-3 border-2 border-dashed rounded-4 d-flex align-items-center justify-content-center gap-2 text-primary" @onclick="AbrirModalVendedor">
+                                        <i class="bi bi-plus-circle fs-5"></i>
+                                        <span class="fw-semibold">Agregar Nuevo Vendedor</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="premium-card">
+                                <div class="p-4">
+                                    <label class="form-label fw-semibold text-secondary mb-3 d-flex align-items-center gap-2">
+                                        <i class="bi bi-chat-square-text text-primary"></i>
+                                        Requerimientos Específicos
+                                    </label>
+                                    <InputTextArea @bind-Value="prospecto.NotasRecepcion"
+                                                   class="textarea-premium w-100"
+                                                   placeholder="¿Qué equipo busca? (Toneladas, marca, tipo de instalación, presupuesto...)" />
+                                    <div class="mt-2 text-end">
+                                        <small class="text-muted">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Mínimo 10 caracteres
+                                        </small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    @* COLUMNA DERECHA: ASIGNACIÓN *@
-                    <div class="col-lg-4">
-                        <div class="card glass-card shadow-sm border-0 mb-4">
-                            <div class="card-body p-4 text-center border-bottom bg-primary-subtle rounded-top-4">
-                                <h6 class="form-label-custom text-primary">Asignación Directa</h6>
-                                <div class="mt-3 mb-3">
-                                    <InputSelect @bind-Value="prospecto.VendedorId" class="form-select form-select-lg border-0 shadow-sm">
-                                        <option value="">-- Seleccionar Vendedor --</option>
-                                        @if (vendedores != null)
-                                        {
-                                            @foreach (var v in vendedores)
-                                            {
-                                                <option value="@v.Id">@v.NombreCompleto</option>
-                                            }
-                                        }
-                                    </InputSelect>
-                                </div>
-                                <button type="button" class="btn btn-sm btn-white w-100 rounded-pill shadow-sm" @onclick="AbrirModalVendedor">
-                                    <i class="bi bi-plus-circle me-1"></i> Nuevo Vendedor
-                                </button>
-                            </div>
-                            <div class="card-body p-4">
-                                <label class="form-label-custom"><i class="bi bi-chat-quote me-2"></i>Requerimientos Específicos</label>
-                                <InputTextArea @bind-Value="prospecto.NotasRecepcion"
-                                               class="form-control bg-light border-0"
-                                               rows="8"
-                                               placeholder="¿Qué equipo busca? (Toneladas, Marca preferida, Tipo de instalación...)" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </EditForm>
-        </div>
-    </div>
-</div>
-
-@* MODAL RE-DISEÑADO *@
-@if (mostrarModalVendedor)
-{
-    <div class="modal fade show d-block" style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px);" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-2xl rounded-4">
-                <div class="modal-header bg-dark text-white border-0 py-3">
-                    <h5 class="modal-title fw-bold">Configuración de Nuevo Agente</h5>
-                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModalVendedor"></button>
-                </div>
-                <EditForm Model="@nuevoUsuario" OnValidSubmit="GuardarVendedor">
-                    <div class="modal-body p-4">
-                        <div class="mb-4 p-3 bg-primary-subtle rounded-3">
-                            <label class="form-label-custom text-primary d-block">Unidad de Negocio (Empresa)</label>
-                            <InputSelect @bind-Value="nuevoUsuario.EmpresaId" class="form-select border-0 shadow-sm">
-                                <option value="0">Seleccionar Empresa...</option>
-                                @if (listaEmpresas != null)
-                                {
-                                    @foreach (var emp in listaEmpresas)
-                                    {
-                                        <option value="@emp.Id">@emp.RazonSocial</option>
-                                    }
-                                }
-                            </InputSelect>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label-custom">Nombre del Vendedor</label>
-                            <InputText @bind-Value="nuevoUsuario.NombreCompleto" class="form-control p-2 shadow-sm" placeholder="Nombre Apellido" />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label-custom">E-mail Corporativo</label>
-                            <InputText @bind-Value="nuevoUsuario.CorreoElectronico" class="form-control p-2 shadow-sm" placeholder="usuario@ayc.com" />
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0 p-4 pt-0">
-                        <button type="button" class="btn btn-light px-4" @onclick="CerrarModalVendedor">Cancelar</button>
-                        <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">Confirmar Alta</button>
                     </div>
                 </EditForm>
             </div>
         </div>
     </div>
-}
-@* --- MODAL PARA NUEVO VENDEDOR --- *@
+</div>
+
+@* MODAL PREMIUM PARA NUEVO VENDEDOR *@
 @if (mostrarModalVendedor)
 {
-    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal fade show d-block modal-premium" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Registrar Nuevo Vendedor</h5>
-                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModalVendedor"></button>
-                </div>
+            <div class="modal-content modal-content-premium">
                 <EditForm Model="@nuevoUsuario" OnValidSubmit="GuardarVendedor">
-                    <div class="modal-body">
-                        @* CLAVE: Selector de Empresa para evitar error de FK *@
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Asignar a Empresa (Razón Social)</label>
-                            <InputSelect @bind-Value="nuevoUsuario.EmpresaId" class="form-select border-primary">
-                                <option value="0">-- Seleccione Empresa --</option>
+                    <div class="bg-dark text-white p-4 position-relative">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4 class="fw-bold mb-1">Nuevo Agente Comercial</h4>
+                                <p class="text-white-50 mb-0 small">Complete los datos para dar de alta al vendedor</p>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" @onclick="CerrarModalVendedor"></button>
+                        </div>
+                    </div>
+
+                    <div class="p-4">
+                        <div class="mb-4 p-3 bg-light rounded-3 border-start border-4 border-primary">
+                            <label class="form-label fw-semibold text-secondary mb-2">
+                                <i class="bi bi-building text-primary me-1"></i>Unidad de Negocio (Empresa)
+                            </label>
+                            <InputSelect @bind-Value="nuevoUsuario.EmpresaId" class="select-premium w-100">
+                                <option value="0">Seleccionar empresa...</option>
                                 @if (listaEmpresas != null)
                                 {
                                     @foreach (var emp in listaEmpresas)
@@ -247,18 +514,28 @@
                             </InputSelect>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nombre Completo</label>
-                            <InputText @bind-Value="nuevoUsuario.NombreCompleto" class="form-control" />
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-secondary mb-2">
+                                <i class="bi bi-person-circle me-1"></i>Nombre del Vendedor
+                            </label>
+                            <InputText @bind-Value="nuevoUsuario.NombreCompleto" class="input-premium w-100" placeholder="Ej. Carlos Rodríguez" />
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Correo Electrónico</label>
-                            <InputText @bind-Value="nuevoUsuario.CorreoElectronico" class="form-control" />
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-secondary mb-2">
+                                <i class="bi bi-envelope me-1"></i>Correo Corporativo
+                            </label>
+                            <InputText @bind-Value="nuevoUsuario.CorreoElectronico" class="input-premium w-100" placeholder="vendedor@empresa.com" />
                         </div>
                     </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-secondary" @onclick="CerrarModalVendedor">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Vendedor</button>
+
+                    <div class="p-4 bg-light border-top d-flex justify-content-end gap-3">
+                        <button type="button" class="btn-premium-secondary" @onclick="CerrarModalVendedor">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-premium-primary">
+                            <i class="bi bi-check-circle me-2"></i>Confirmar Alta
+                        </button>
                     </div>
                 </EditForm>
             </div>
@@ -301,7 +578,6 @@
     {
         try
         {
-            // Asumiendo que tu IEmpresaService tiene este método para cargar las 2 razones sociales
             listaEmpresas = await EmpresaService.ObtenerEmpresasHabilitadas();
         }
         catch (Exception ex)
@@ -332,7 +608,7 @@
 
     private void AbrirModalVendedor()
     {
-        nuevoUsuario = new UsuarioDto { EmpresaId = 1 }; // Valor por defecto
+        nuevoUsuario = new UsuarioDto { EmpresaId = 1 };
         mostrarModalVendedor = true;
     }
 
@@ -348,12 +624,9 @@
 
         try
         {
-            // El servidor ahora recibirá el EmpresaId correcto, evitando el error 400
             await UsuarioService.CrearVendedor(nuevoUsuario);
-
             mostrarModalVendedor = false;
             nuevoUsuario = new UsuarioDto();
-
             await CargarVendedores();
             StateHasChanged();
         }

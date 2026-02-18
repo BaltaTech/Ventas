@@ -6,154 +6,931 @@
 @inject IProspectoService ProspectoService
 @inject NavigationManager Navigation
 
-<div class="container-fluid mt-4">
-    <div class="card shadow border-0">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
-            <h5 class="mb-0"><i class="bi bi-wind me-2"></i>Seguimiento de Aire Acondicionado</h5>
-            <button class="btn btn-success btn-sm shadow-sm" @onclick='() => Navigation.NavigateTo("/prospectos/registrar")'>
-                <i class="bi bi-plus-circle me-1"></i> Nuevo Registro
-            </button>
+<style>
+    /* Estilos premium con paleta corporativa moderna */
+    .page-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 2rem 1rem;
+    }
+
+    /* Header con gradiente y efectos */
+    .header-premium {
+        background: linear-gradient(145deg, #1a2639 0%, #2c3e50 100%);
+        border-radius: 28px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .header-premium::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-premium::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(13,110,253,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+    .badge-premium {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .stats-badge {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 0.5rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Botones premium */
+    .btn-premium-primary {
+        background: linear-gradient(145deg, #0d6efd, #0b5ed7);
+        border: none;
+        border-radius: 100px;
+        padding: 0.9rem 2rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: white;
+        box-shadow: 0 10px 20px -5px rgba(13, 110, 253, 0.4);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+        .btn-premium-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-premium-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-premium-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(13, 110, 253, 0.5);
+        }
+
+    .btn-premium-outline {
+        background: transparent;
+        border: 2px solid rgba(255,255,255,0.2);
+        border-radius: 100px;
+        padding: 0.9rem 1.8rem;
+        font-weight: 500;
+        color: white;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
+    }
+
+        .btn-premium-outline:hover {
+            border-color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+    /* Barra de búsqueda premium */
+    .search-container {
+        background: white;
+        border-radius: 60px;
+        padding: 0.3rem;
+        box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.3);
+        backdrop-filter: blur(10px);
+        max-width: 600px;
+    }
+
+    .search-input {
+        border: none;
+        border-radius: 60px;
+        padding: 1rem 1.8rem;
+        font-size: 1rem;
+        background: transparent;
+        width: 100%;
+    }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+    .search-icon {
+        background: linear-gradient(145deg, #0d6efd, #0b5ed7);
+        color: white;
+        border-radius: 50px;
+        padding: 0.8rem 1.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .clear-search {
+        background: #f8f9fa;
+        border: none;
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        transition: all 0.2s ease;
+    }
+
+        .clear-search:hover {
+            background: #e9ecef;
+            color: #dc3545;
+        }
+
+    /* Estadísticas arriba - Tarjetas más compactas */
+    .stats-row {
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 24px;
+        padding: 1.5rem 1.2rem;
+        box-shadow: 0 10px 25px -8px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.5);
+        height: 100%;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -10px rgba(13, 110, 253, 0.15);
+        }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        background: linear-gradient(145deg, #e7f5ff, #d0ebff);
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .stat-info {
+        flex: 1;
+    }
+
+        .stat-info h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+            color: #1a2639;
+        }
+
+        .stat-info p {
+            color: #6c757d;
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+    .stat-trend {
+        font-size: 0.8rem;
+        color: #198754;
+        background: rgba(25, 135, 84, 0.1);
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        margin-top: 0.3rem;
+    }
+
+    /* Tabla premium estilo tarjetas */
+    .table-premium {
+        border-collapse: separate;
+        border-spacing: 0 12px;
+        margin-top: -8px;
+    }
+
+        .table-premium thead th {
+            background: transparent;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.5rem 1.5rem;
+            border: none;
+        }
+
+        .table-premium tbody tr {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+            .table-premium tbody tr:hover {
+                box-shadow: 0 15px 30px -10px rgba(13, 110, 253, 0.15);
+                transform: translateY(-2px);
+                background: white;
+            }
+
+            .table-premium tbody tr td {
+                padding: 1.2rem 1.5rem;
+                border: none;
+                vertical-align: middle;
+            }
+
+                .table-premium tbody tr td:first-child {
+                    border-radius: 20px 0 0 20px;
+                }
+
+                .table-premium tbody tr td:last-child {
+                    border-radius: 0 20px 20px 0;
+                }
+
+    /* Componentes de celda */
+    .client-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .client-name {
+        font-weight: 700;
+        color: #1a2639;
+        font-size: 1rem;
+    }
+
+    .client-notes {
+        font-size: 0.75rem;
+        color: #6c757d;
+        background: #f8f9fa;
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        max-width: fit-content;
+        border: 1px solid #e9ecef;
+    }
+
+    .contact-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #495057;
+    }
+
+        .contact-item i {
+            color: #adb5bd;
+            font-size: 0.8rem;
+            width: 16px;
+        }
+
+    .company-badge {
+        background: linear-gradient(145deg, #e7f5ff, #d0ebff);
+        color: #0d6efd;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+        border: 1px solid rgba(13, 110, 253, 0.2);
+        margin-bottom: 0.3rem;
+    }
+
+    .seller-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #1a2639;
+        background: #f8f9fa;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        width: fit-content;
+    }
+
+    .status-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .status-badge.atendido {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            border: 1px solid rgba(25, 135, 84, 0.2);
+        }
+
+        .status-badge.pendiente {
+            background: rgba(255, 193, 7, 0.1);
+            color: #856404;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+    /* Botones de acción */
+    .action-group {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .btn-action {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e9ecef;
+        background: white;
+        color: #495057;
+        transition: all 0.2s ease;
+    }
+
+        .btn-action:hover {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .btn-action.success {
+            background: #198754;
+            border-color: #198754;
+            color: white;
+        }
+
+            .btn-action.success:hover {
+                background: #157347;
+                border-color: #157347;
+            }
+
+    /* Filtros rápidos */
+    .filter-group {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-chip {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 50px;
+        padding: 0.5rem 1.2rem;
+        font-size: 0.85rem;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .filter-chip:hover {
+            border-color: #0d6efd;
+            color: #0d6efd;
+            background: #f8f9fa;
+        }
+
+        .filter-chip.active {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+
+    /* Modal premium */
+    .modal-premium {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+        animation: modalFadeIn 0.3s ease;
+    }
+
+    .modal-content-premium {
+        background: white;
+        border: none;
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 0 40px 70px -15px rgba(0, 0, 0, 0.4);
+        animation: modalSlideUp 0.4s ease;
+    }
+
+    @@keyframes modalFadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes modalSlideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-header-premium {
+        background: linear-gradient(145deg, #1a2639, #2c3e50);
+        color: white;
+        padding: 1.8rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .detail-section {
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 1.2rem;
+        border-left: 4px solid #0d6efd;
+    }
+
+    .detail-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        margin-bottom: 0.2rem;
+        display: block;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+        color: #1a2639;
+        font-weight: 500;
+    }
+
+    /* Loading skeleton */
+    .loading-skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #f8f9fa 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        border-radius: 10px;
+        height: 20px;
+    }
+
+    @@keyframes loading {
+        0% {
+            background-position: 200% 0;
+        }
+
+        100% {
+            background-position: -200% 0;
+        }
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 32px;
+        box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+    }
+
+        .empty-state i {
+            font-size: 5rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h4 {
+            color: #1a2639;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #adb5bd;
+            margin-bottom: 2rem;
+        }
+</style>
+
+<div class="page-container">
+    <div class="container-fluid">
+        @* HEADER PREMIUM *@
+        <div class="header-premium">
+            <div class="row align-items-center position-relative" style="z-index: 2;">
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge-premium">
+                            <i class="bi bi-wind"></i>
+                            Seguimiento de Climatización
+                        </span>
+                    </div>
+                    <h1 class="display-5 fw-bold text-white mb-2">Panel de Prospectos</h1>
+                    <p class="text-white-50 mb-0 fs-5">Gestiona y da seguimiento a tus leads comerciales en tiempo real</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                    <button class="btn-premium-primary" @onclick='() => Navigation.NavigateTo("/prospectos/registrar")'>
+                        <i class="bi bi-plus-circle fs-5"></i>
+                        Nuevo Registro
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Fecha</th>
-                            <th style="min-width: 250px;">Cliente / Equipo</th>
-                            <th>Contacto</th>
-                            <th>Empresa</th>
-                            <th>Vendedor</th> @* Columna del Vendedor *@
-                            <th>Estado</th>
-                            <th class="text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (prospectos == null)
+
+        @* ESTADÍSTICAS ARRIBA - SIEMPRE VISIBLES *@
+        @if (prospectosCompletos != null)
+        {
+            <div class="row stats-row g-4">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>@prospectosCompletos.Count()</h3>
+                            <p>Total prospectos</p>
+                            @if (prospectosCompletos.Any())
+                            {
+                                <span class="stat-trend">
+                                    <i class="bi bi-arrow-up"></i>
+                                    @((prospectosCompletos.Count(p => p.Atendido) * 100 / prospectosCompletos.Count()))% atendidos
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(255,193,7,0.1); color: #856404;">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>@prospectosCompletos.Count(p => !p.Atendido)</h3>
+                            <p>Pendientes</p>
+                            @if (prospectosCompletos.Any())
+                            {
+                                <span class="stat-trend" style="color: #856404; background: rgba(255,193,7,0.1);">
+                                    <i class="bi bi-hourglass"></i>
+                                    @((prospectosCompletos.Count(p => !p.Atendido) * 100 / prospectosCompletos.Count()))% del total
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(25,135,84,0.1); color: #198754;">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>@prospectosCompletos.Count(p => p.Atendido)</h3>
+                            <p>Atendidos</p>
+                            @if (prospectosCompletos.Any())
+                            {
+                                <span class="stat-trend" style="color: #198754; background: rgba(25,135,84,0.1);">
+                                    <i class="bi bi-check-lg"></i>
+                                    @((prospectosCompletos.Count(p => p.Atendido) * 100 / prospectosCompletos.Count()))% completado
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* BARRA DE BÚSQUEDA PREMIUM *@
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="search-container d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <i class="bi bi-search text-muted ms-3 me-2"></i>
+                        <input type="text"
+                               class="search-input"
+                               placeholder="Buscar por cliente, vendedor, empresa o teléfono..."
+                               value="@textoBusqueda"
+                               @oninput="FiltrarProspectos" />
+                    </div>
+                    @if (!string.IsNullOrEmpty(textoBusqueda))
+                    {
+                        <button class="clear-search me-2" @onclick="LimpiarBusqueda">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    }
+                    <span class="search-icon">
+                        <i class="bi bi-funnel"></i>
+                        Filtrar
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="filter-group justify-content-lg-end mt-3 mt-lg-0">
+                    <span class="filter-chip @(filtroEstado == null ? "active" : "")" @onclick="() => FiltrarPorEstado(null)">
+                        <i class="bi bi-grid"></i>
+                        Todos
+                    </span>
+                    <span class="filter-chip @(filtroEstado == false ? "active" : "")" @onclick="() => FiltrarPorEstado(false)">
+                        <i class="bi bi-clock-history"></i>
+                        Pendientes
+                    </span>
+                    <span class="filter-chip @(filtroEstado == true ? "active" : "")" @onclick="() => FiltrarPorEstado(true)">
+                        <i class="bi bi-check-circle"></i>
+                        Atendidos
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        @* TABLA PREMIUM *@
+        <div class="table-responsive">
+            <table class="table-premium w-100">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cliente / Requerimiento</th>
+                        <th>Contacto</th>
+                        <th>Asignación</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (prospectosFiltrados == null)
+                    {
+                        @for (int i = 0; i < 3; i++)
                         {
                             <tr>
-                                <td colspan="7" class="text-center py-4">
-                                    <div class="spinner-border spinner-border-sm text-primary me-2"></div> Cargando datos...
+                                <td colspan="6" class="p-4">
+                                    <div class="loading-skeleton" style="width: 100%; height: 60px;"></div>
                                 </td>
                             </tr>
                         }
-                        else if (!prospectos.Any())
+                    }
+                    else if (!prospectosFiltrados.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="p-0">
+                                <div class="empty-state">
+                                    <i class="bi bi-inbox"></i>
+                                    <h4>No hay prospectos</h4>
+                                    <p>@(string.IsNullOrEmpty(textoBusqueda) ? "Comienza agregando tu primer lead comercial" : "No se encontraron resultados para tu búsqueda")</p>
+                                    @if (!string.IsNullOrEmpty(textoBusqueda))
+                                    {
+                                        <button class="btn btn-outline-primary rounded-pill px-4 py-2" @onclick="LimpiarBusqueda">
+                                            <i class="bi bi-x-circle"></i>
+                                            Limpiar búsqueda
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-premium-primary" @onclick='() => Navigation.NavigateTo("/prospectos/registrar")'>
+                                            <i class="bi bi-plus-circle"></i>
+                                            Registrar Prospecto
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in prospectosFiltrados)
                         {
-                            <tr><td colspan="7" class="text-center text-muted py-4">No hay prospectos registrados.</td></tr>
-                        }
-                        else
-                        {
-                            @foreach (var item in prospectos)
-                            {
-                                <tr>
-                                    <td>@item.FechaRegistro.ToString("dd/MM/yyyy")</td>
-                                    <td>
-                                        <div class="d-flex flex-column">
-                                            <span class="fw-bold text-dark">@item.NombreCliente</span>
-                                            @if (!string.IsNullOrEmpty(item.NotasRecepcion))
-                                            {
-                                                <small class="text-muted mt-1 p-1 bg-light border-start border-3 border-info rounded"
-                                                       style="font-size: 0.75rem; cursor: pointer;"
-                                                       @onclick="() => MostrarDetalle(item)">
-                                                    <i class="bi bi-chat-left-text text-info me-1"></i>
-                                                    @(item.NotasRecepcion.Length > 35 ? item.NotasRecepcion.Substring(0, 32) + "..." : item.NotasRecepcion)
-                                                </small>
-                                            }
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <small class="d-block"><i class="bi bi-telephone text-muted"></i> @item.Telefono</small>
-                                        <small class="d-block"><i class="bi bi-envelope text-muted"></i> @item.Correo</small>
-                                    </td>
-                                    <td><span class="badge border border-primary text-primary fw-normal">@item.RazonSocial</span></td>
-
-                                    @* --- CORRECCIÓN COLUMNA VENDEDOR --- *@
-                                    <td>
-                                        @if (!string.IsNullOrWhiteSpace(item.NombreVendedor))
+                            <tr @onclick="() => MostrarDetalle(item)">
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-semibold">@item.FechaRegistro.ToString("dd MMM")</span>
+                                        <small class="text-muted">@item.FechaRegistro.ToString("yyyy")</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="client-info">
+                                        <span class="client-name">@item.NombreCliente</span>
+                                        @if (!string.IsNullOrEmpty(item.NotasRecepcion))
                                         {
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-person-badge me-2 text-secondary"></i>
-                                                <span class="text-dark">@item.NombreVendedor</span>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted small italic"><i>Sin asignar</i></span>
-                                        }
-                                    </td>
-
-                                    <td>
-                                        @if (item.Atendido)
-                                        {
-                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2">
-                                                <i class="bi bi-check-circle-fill me-1"></i> Atendido
+                                            <span class="client-notes">
+                                                <i class="bi bi-chat-left-text"></i>
+                                                @(item.NotasRecepcion.Length > 35 ? item.NotasRecepcion.Substring(0, 32) + "..." : item.NotasRecepcion)
                                             </span>
                                         }
-                                        else
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="contact-details">
+                                        <span class="contact-item">
+                                            <i class="bi bi-telephone"></i>
+                                            @item.Telefono
+                                        </span>
+                                        <span class="contact-item">
+                                            <i class="bi bi-envelope"></i>
+                                            @item.Correo
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="company-badge">
+                                            <i class="bi bi-building"></i>
+                                            @item.RazonSocial
+                                        </span>
+                                        <span class="seller-info">
+                                            <i class="bi bi-person-circle"></i>
+                                            @(item.NombreVendedor ?? "Sin asignar")
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (item.Atendido)
+                                    {
+                                        <span class="status-badge atendido">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            Atendido
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge pendiente">
+                                            <i class="bi bi-clock-history"></i>
+                                            Pendiente
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end" @onclick:stopPropagation>
+                                    <div class="action-group">
+                                        <button class="btn-action" title="Ver detalles" @onclick="() => MostrarDetalle(item)">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        @if (!item.Atendido)
                                         {
-                                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-50 px-2">
-                                                <i class="bi bi-clock-history me-1"></i> Pendiente
-                                            </span>
-                                        }
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="btn-group">
-                                            <button class="btn btn-sm btn-outline-info" title="Ver detalle completo" @onclick="() => MostrarDetalle(item)">
-                                                <i class="bi bi-eye"></i>
+                                            <button class="btn-action success"
+                                                    @onclick="() => MarcarAtendido(item.Id)"
+                                                    disabled="@estaCargando"
+                                                    title="Marcar como atendido">
+                                                <i class="bi bi-check-lg"></i>
                                             </button>
-
-                                            @if (!item.Atendido)
-                                            {
-                                                <button class="btn btn-success btn-sm"
-                                                        @onclick="() => MarcarAtendido(item.Id)"
-                                                        disabled="@estaCargando">
-                                                    <i class="bi bi-check-lg"></i> Atender
-                                                </button>
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-@* --- MODAL DE DETALLE --- *@
+@* MODAL PREMIUM DE DETALLE *@
 @if (prospectoSeleccionado != null)
 {
-    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fs-6"><i class="bi bi-info-circle me-2"></i>Detalles del Requerimiento</h5>
-                    <button type="button" class="btn-close btn-close-white" @onclick="() => prospectoSeleccionado = null"></button>
+    <div class="modal fade show d-block modal-premium" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content modal-content-premium">
+                <div class="modal-header-premium">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="fw-bold mb-1">@prospectoSeleccionado.NombreCliente</h3>
+                            <p class="text-white-50 mb-0 small">Detalles completos del prospecto</p>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" @onclick="() => prospectoSeleccionado = null"></button>
+                    </div>
                 </div>
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="text-uppercase small fw-bold text-muted d-block">Cliente</label>
-                        <span class="h5 text-primary">@prospectoSeleccionado.NombreCliente</span>
-                    </div>
 
-                    @* Añadido Vendedor en el Modal para verificar *@
-                    <div class="mb-3">
-                        <label class="text-uppercase small fw-bold text-muted d-block">Vendedor Asignado</label>
-                        <span class="text-dark">@(string.IsNullOrEmpty(prospectoSeleccionado.NombreVendedor) ? "No asignado" : prospectoSeleccionado.NombreVendedor)</span>
-                    </div>
+                <div class="p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <span class="detail-label">Vendedor asignado</span>
+                            <div class="seller-info mb-3">
+                                <i class="bi bi-person-circle"></i>
+                                @(prospectoSeleccionado.NombreVendedor ?? "No asignado")
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="text-uppercase small fw-bold text-muted d-block">Especificaciones Técnicas</label>
-                        <div class="p-3 bg-light border-start border-4 border-info rounded text-dark mt-1" style="white-space: pre-wrap;">
-                            <i class="bi bi-quote fs-4 text-info opacity-50"></i>
-                            <em>@prospectoSeleccionado.NotasRecepcion</em>
+                            <span class="detail-label">Contacto</span>
+                            <div class="d-flex flex-column gap-2 mb-3">
+                                <span class="contact-item">
+                                    <i class="bi bi-telephone"></i>
+                                    @prospectoSeleccionado.Telefono
+                                </span>
+                                <span class="contact-item">
+                                    <i class="bi bi-envelope"></i>
+                                    @prospectoSeleccionado.Correo
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <span class="detail-label">Empresa</span>
+                            <span class="company-badge mb-3 d-inline-block">
+                                <i class="bi bi-building"></i>
+                                @prospectoSeleccionado.RazonSocial
+                            </span>
+
+                            <span class="detail-label">Estado</span>
+                            <div class="mb-3">
+                                @if (prospectoSeleccionado.Atendido)
+                                {
+                                    <span class="status-badge atendido">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        Atendido
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge pendiente">
+                                        <i class="bi bi-clock-history"></i>
+                                        Pendiente
+                                    </span>
+                                }
+                            </div>
+
+                            <span class="detail-label">Fecha de registro</span>
+                            <span class="detail-value">@prospectoSeleccionado.FechaRegistro.ToString("dd MMMM yyyy 'a las' HH:mm")</span>
+                        </div>
+
+                        <div class="col-12">
+                            <span class="detail-label mb-2">Requerimientos específicos</span>
+                            <div class="detail-section">
+                                <i class="bi bi-quote fs-3 text-primary opacity-25 mb-2 d-block"></i>
+                                <p class="mb-0" style="white-space: pre-wrap; font-size: 1rem; line-height: 1.6;">
+                                    @prospectoSeleccionado.NotasRecepcion
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer bg-light border-0">
-                    <button type="button" class="btn btn-secondary px-4" @onclick="() => prospectoSeleccionado = null">Cerrar</button>
+
+                <div class="p-4 bg-light border-top">
+                    <div class="d-flex justify-content-end gap-3">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2" @onclick="() => prospectoSeleccionado = null">
+                            <i class="bi bi-x-lg me-2"></i>
+                            Cerrar
+                        </button>
+                        @if (!prospectoSeleccionado.Atendido)
+                        {
+                            <button class="btn-premium-primary" @onclick="async () => { await MarcarAtendido(prospectoSeleccionado.Id); prospectoSeleccionado = null; }" disabled="@estaCargando">
+                                <i class="bi bi-check-lg"></i>
+                                Marcar como atendido
+                            </button>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -161,23 +938,81 @@
 }
 
 @code {
-    private IEnumerable<ProspectoDto>? prospectos;
+    private IEnumerable<ProspectoDto>? prospectosCompletos; // Fuente original
+    private IEnumerable<ProspectoDto>? prospectosFiltrados; // Fuente para la UI
     private ProspectoDto? prospectoSeleccionado;
     private bool estaCargando = false;
+    private string textoBusqueda = "";
+    private bool? filtroEstado = null;
 
-    protected override async Task OnInitializedAsync() => await CargarDatos();
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
 
     private async Task CargarDatos()
     {
         try
         {
-            prospectos = await ProspectoService.ObtenerTodos();
+            prospectosCompletos = await ProspectoService.ObtenerTodos();
+            AplicarFiltros();
         }
         catch (Exception ex)
         {
-            prospectos = new List<ProspectoDto>();
+            prospectosCompletos = new List<ProspectoDto>();
+            AplicarFiltros();
             Console.WriteLine($"Error: {ex.Message}");
         }
+    }
+
+    private void FiltrarProspectos(ChangeEventArgs e)
+    {
+        textoBusqueda = e.Value?.ToString() ?? "";
+        AplicarFiltros();
+    }
+
+    private void FiltrarPorEstado(bool? estado)
+    {
+        filtroEstado = estado;
+        AplicarFiltros();
+    }
+
+    private void AplicarFiltros()
+    {
+        if (prospectosCompletos == null)
+        {
+            prospectosFiltrados = null;
+            return;
+        }
+
+        var query = prospectosCompletos.AsEnumerable();
+
+        // Aplicar filtro de búsqueda
+        if (!string.IsNullOrWhiteSpace(textoBusqueda))
+        {
+            query = query.Where(p =>
+                (p.NombreCliente?.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.NombreVendedor?.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.RazonSocial?.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Telefono?.Contains(textoBusqueda) ?? false)
+            );
+        }
+
+        // Aplicar filtro de estado
+        if (filtroEstado.HasValue)
+        {
+            query = query.Where(p => p.Atendido == filtroEstado.Value);
+        }
+
+        prospectosFiltrados = query.ToList();
+        StateHasChanged();
+    }
+
+    private void LimpiarBusqueda()
+    {
+        textoBusqueda = "";
+        filtroEstado = null;
+        AplicarFiltros();
     }
 
     private void MostrarDetalle(ProspectoDto p) => prospectoSeleccionado = p;
@@ -190,11 +1025,6 @@
             estaCargando = true;
             await ProspectoService.MarcarComoAtendido(id);
             await CargarDatos();
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
         }
         finally
         {
