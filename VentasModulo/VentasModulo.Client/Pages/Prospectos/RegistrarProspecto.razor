@@ -9,132 +9,217 @@
 @inject IEmpresaService EmpresaService
 @inject NavigationManager Navigation
 
-<div class="container mt-5">
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: none;
+        border-radius: 15px;
+    }
+
+    .form-label-custom {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+
+    .input-group-text-custom {
+        background-color: #f8f9fa;
+        border-right: none;
+        color: #0d6efd;
+    }
+
+    .form-control-custom {
+        border-left: none;
+        padding: 0.75rem;
+    }
+
+        .form-control-custom:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+
+    .btn-gradient-primary {
+        background: linear-gradient(45deg, #0d6efd, #0043a8);
+        border: none;
+        transition: transform 0.2s;
+    }
+
+        .btn-gradient-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        }
+</style>
+
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card shadow-lg border-0">
-                @* Encabezado *@
-                <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Nuevo Registro de Cliente</h4>
-                    <span class="badge bg-primary px-3">Recepción</span>
+        <div class="col-xl-11">
+            <EditForm Model="@prospecto" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+
+                @* HEADER *@
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h2 class="fw-bold text-dark mb-1">Recepción de Leads</h2>
+                        <p class="text-muted">Registro centralizado para prospección comercial</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" @onclick='() => Navigation.NavigateTo("/prospectos/lista")'>
+                            <i class="bi bi-arrow-left me-2"></i>Volver
+                        </button>
+                        <button type="submit" class="btn btn-gradient-primary text-white px-5 rounded-pill shadow-sm" disabled="@enviando">
+                            @if (enviando)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-cloud-check-fill me-2"></i>
+                            
+                                <span>Finalizar Registro</span>
+                            }
+                        </button>
+                    </div>
                 </div>
 
-                <div class="card-body p-4 bg-light">
-                    <EditForm Model="@prospecto" OnValidSubmit="Guardar">
-                        <DataAnnotationsValidator />
+                <div class="row g-4">
+                    @* COLUMNA IZQUIERDA: CLIENTE *@
+                    <div class="col-lg-8">
+                        <div class="card glass-card shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <h5 class="card-title mb-4 d-flex align-items-center">
+                                    <span class="bg-primary-subtle text-primary p-2 rounded-3 me-3">
+                                        <i class="bi bi-person-badge fs-4"></i>
+                                    </span>
+                                    Información del Cliente
+                                </h5>
 
-                        <div class="row g-4">
-                            @* --- SECCIÓN: DATOS PERSONALES --- *@
-                            <div class="col-md-7 border-end">
-                                <h6 class="text-primary fw-bold mb-3"><i class="bi bi-person-vcard me-2"></i>Información de Contacto</h6>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Nombre del Cliente / Empresa</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                        <InputText @bind-Value="prospecto.NombreCliente" class="form-control" placeholder="Ej: Constructora Delta" />
-                                    </div>
-                                    <ValidationMessage For="@(() => prospecto.NombreCliente)" class="text-danger small" />
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">Teléfono</label>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label-custom">Nombre o Razón Social</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                                            <InputText @bind-Value="prospecto.Telefono" class="form-control" placeholder="664..." />
+                                            <span class="input-group-text input-group-text-custom"><i class="bi bi-building"></i></span>
+                                            <InputText @bind-Value="prospecto.NombreCliente" class="form-control form-control-custom" placeholder="Ej. Constructora Delta S.A." />
                                         </div>
-                                        <ValidationMessage For="@(() => prospecto.Telefono)" class="text-danger small" />
+                                        <ValidationMessage For="@(() => prospecto.NombreCliente)" class="text-danger x-small" />
                                     </div>
+
                                     <div class="col-md-6">
-                                        <label class="form-label fw-bold">Correo</label>
+                                        <label class="form-label-custom">WhatsApp / Teléfono</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                            <InputText @bind-Value="prospecto.Correo" class="form-control" placeholder="correo@ejemplo.com" />
+                                            <span class="input-group-text input-group-text-custom"><i class="bi bi-whatsapp"></i></span>
+                                            <InputText @bind-Value="prospecto.Telefono" class="form-control form-control-custom" placeholder="664 000 0000" />
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label class="form-label fw-bold text-success">Origen del Lead</label>
-                                        <InputSelect @bind-Value="prospecto.Origen" class="form-select border-success">
+                                        <label class="form-label-custom">Correo Electrónico</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text input-group-text-custom"><i class="bi bi-envelope-at"></i></span>
+                                            <InputText @bind-Value="prospecto.Correo" class="form-control form-control-custom" placeholder="contacto@cliente.com" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label-custom text-success">Origen de Contacto</label>
+                                        <InputSelect @bind-Value="prospecto.Origen" class="form-select p-3 bg-light border-0">
                                             @foreach (var val in Enum.GetValues(typeof(OrigenProspecto)))
                                             {
                                                 <option value="@val">@val</option>
                                             }
                                         </InputSelect>
                                     </div>
+
                                     <div class="col-md-6">
-                                        <label class="form-label fw-bold">Razón Social</label>
-                                        <InputText @bind-Value="prospecto.RazonSocial" class="form-control" placeholder="Nombre para facturar" />
+                                        <label class="form-label-custom">Razón Social para Factura</label>
+                                        <InputText @bind-Value="prospecto.RazonSocial" class="form-control p-3 bg-light border-0" placeholder="Opcional" />
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            @* --- SECCIÓN: ASIGNACIÓN Y NOTAS --- *@
-                            <div class="col-md-5">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="text-primary fw-bold mb-0"><i class="bi bi-clipboard-check me-2"></i>Asignación</h6>
-                                    <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AbrirModalVendedor">
-                                        <i class="bi bi-plus-circle"></i> Nuevo Vendedor
-                                    </button>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Vendedor Asignado</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                        <InputSelect @bind-Value="prospecto.VendedorId" class="form-select border-primary shadow-sm">
-                                            <option value="">-- Seleccionar Vendedor --</option>
-                                            @if (vendedores != null)
+                    @* COLUMNA DERECHA: ASIGNACIÓN *@
+                    <div class="col-lg-4">
+                        <div class="card glass-card shadow-sm border-0 mb-4">
+                            <div class="card-body p-4 text-center border-bottom bg-primary-subtle rounded-top-4">
+                                <h6 class="form-label-custom text-primary">Asignación Directa</h6>
+                                <div class="mt-3 mb-3">
+                                    <InputSelect @bind-Value="prospecto.VendedorId" class="form-select form-select-lg border-0 shadow-sm">
+                                        <option value="">-- Seleccionar Vendedor --</option>
+                                        @if (vendedores != null)
+                                        {
+                                            @foreach (var v in vendedores)
                                             {
-                                                @foreach (var v in vendedores)
-                                                {
-                                                    <option value="@v.Id">@v.NombreCompleto</option>
-                                                }
+                                                <option value="@v.Id">@v.NombreCompleto</option>
                                             }
-                                        </InputSelect>
-                                    </div>
-                                    <ValidationMessage For="@(() => prospecto.VendedorId)" class="text-danger small" />
+                                        }
+                                    </InputSelect>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold text-info">
-                                        <i class="bi bi-chat-left-dots-fill me-1"></i>Notas de Recepción
-                                    </label>
-                                    <InputTextArea @bind-Value="prospecto.NotasRecepcion"
-                                                   class="form-control shadow-sm border-info"
-                                                   rows="6"
-                                                   placeholder="Describa el equipo solicitado: Toneladas, tipo..." />
-                                </div>
+                                <button type="button" class="btn btn-sm btn-white w-100 rounded-pill shadow-sm" @onclick="AbrirModalVendedor">
+                                    <i class="bi bi-plus-circle me-1"></i> Nuevo Vendedor
+                                </button>
+                            </div>
+                            <div class="card-body p-4">
+                                <label class="form-label-custom"><i class="bi bi-chat-quote me-2"></i>Requerimientos Específicos</label>
+                                <InputTextArea @bind-Value="prospecto.NotasRecepcion"
+                                               class="form-control bg-light border-0"
+                                               rows="8"
+                                               placeholder="¿Qué equipo busca? (Toneladas, Marca preferida, Tipo de instalación...)" />
                             </div>
                         </div>
-
-                        @* --- BOTONES DE ACCIÓN --- *@
-                        <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
-                            <button type="button" class="btn btn-light border px-4" @onclick='() => Navigation.NavigateTo("/prospectos/lista")'>
-                                <i class="bi bi-x-circle me-2"></i>Cancelar
-                            </button>
-                            <button type="submit" class="btn btn-success px-5 shadow" disabled="@enviando">
-                                @if (enviando)
-                                {
-                                    <span class="spinner-border spinner-border-sm me-2"></span>
-                                    <span>Guardando...</span>
-                                }
-                                else
-                                {
-                                    <span><i class="bi bi-save2-fill me-2"></i>Finalizar Registro</span>
-                                }
-                            </button>
-                        </div>
-                    </EditForm>
+                    </div>
                 </div>
-            </div>
+            </EditForm>
         </div>
     </div>
 </div>
 
+@* MODAL RE-DISEÑADO *@
+@if (mostrarModalVendedor)
+{
+    <div class="modal fade show d-block" style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px);" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-2xl rounded-4">
+                <div class="modal-header bg-dark text-white border-0 py-3">
+                    <h5 class="modal-title fw-bold">Configuración de Nuevo Agente</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModalVendedor"></button>
+                </div>
+                <EditForm Model="@nuevoUsuario" OnValidSubmit="GuardarVendedor">
+                    <div class="modal-body p-4">
+                        <div class="mb-4 p-3 bg-primary-subtle rounded-3">
+                            <label class="form-label-custom text-primary d-block">Unidad de Negocio (Empresa)</label>
+                            <InputSelect @bind-Value="nuevoUsuario.EmpresaId" class="form-select border-0 shadow-sm">
+                                <option value="0">Seleccionar Empresa...</option>
+                                @if (listaEmpresas != null)
+                                {
+                                    @foreach (var emp in listaEmpresas)
+                                    {
+                                        <option value="@emp.Id">@emp.RazonSocial</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">Nombre del Vendedor</label>
+                            <InputText @bind-Value="nuevoUsuario.NombreCompleto" class="form-control p-2 shadow-sm" placeholder="Nombre Apellido" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">E-mail Corporativo</label>
+                            <InputText @bind-Value="nuevoUsuario.CorreoElectronico" class="form-control p-2 shadow-sm" placeholder="usuario@ayc.com" />
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light px-4" @onclick="CerrarModalVendedor">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">Confirmar Alta</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
 @* --- MODAL PARA NUEVO VENDEDOR --- *@
 @if (mostrarModalVendedor)
 {
