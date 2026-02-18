@@ -20,9 +20,22 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<Prospecto>> GetAllAsync()
+        {
+            // Eager Loading: Traemos las tablas relacionadas para que AutoMapper tenga datos que procesar.
+            return await _context.Prospectos
+                .Include(p => p.Empresa)  // Carga la entidad Empresa
+                .Include(p => p.Vendedor) // Carga la entidad Usuario/Vendedor
+                .OrderByDescending(p => p.FechaRegistro)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Prospecto>> GetByVendedorIdAsync(Guid vendedorId)
         {
+            // Agregamos Include aquí también para que las listas filtradas también muestren nombres.
             return await _context.Prospectos
+                .Include(p => p.Empresa)
+                .Include(p => p.Vendedor)
                 .Where(p => p.VendedorId == vendedorId)
                 .ToListAsync();
         }
@@ -30,8 +43,19 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Prospecto>> GetByEmpresaIdAsync(int empresaId)
         {
             return await _context.Prospectos
+                .Include(p => p.Empresa)
+                .Include(p => p.Vendedor)
                 .Where(p => p.EmpresaId == empresaId)
                 .ToListAsync();
+        }
+
+        public async Task<Prospecto?> GetByIdAsync(Guid id)
+        {
+            // Usamos FirstOrDefaultAsync con Include en lugar de FindAsync (que no soporta Includes).
+            return await _context.Prospectos
+                .Include(p => p.Empresa)
+                .Include(p => p.Vendedor)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task UpdateAsync(Prospecto prospecto)
@@ -40,34 +64,14 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Prospecto?> GetByIdAsync(Guid id)
-        {
-            return await _context.Prospectos.FindAsync(id);
-        }
-
-        public async Task<IEnumerable<Prospecto>> GetAllAsync()
-        {
-            // Esto traerá todos los registros (incluyendo a Saul Baltazar)
-            return await _context.Prospectos
-                .Include(p => p.Empresa)  // Para traer la Razon Social
-                .Include(p => p.Vendedor) // Para traer el nombre del vendedor
-                .ToListAsync();
-        }
-
         public async Task MarcarComoAtendido(Guid prospectoId)
         {
-            // Buscamos el registro
             var prospecto = await _context.Prospectos.FindAsync(prospectoId);
 
             if (prospecto != null)
             {
-                // Cambiamos el valor
                 prospecto.Atendido = true;
-
-                // Avisamos a EF que solo cambió esa columna (más eficiente)
                 _context.Entry(prospecto).Property(x => x.Atendido).IsModified = true;
-
-                // Guardamos en SQL
                 await _context.SaveChangesAsync();
             }
         }
