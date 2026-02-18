@@ -10,7 +10,7 @@
     <div class="card shadow border-0">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
             <h5 class="mb-0"><i class="bi bi-wind me-2"></i>Seguimiento de Aire Acondicionado</h5>
-            <button class="btn btn-success btn-sm" @onclick='() => Navigation.NavigateTo("/prospectos/registrar")'>
+            <button class="btn btn-success btn-sm shadow-sm" @onclick='() => Navigation.NavigateTo("/prospectos/registrar")'>
                 <i class="bi bi-plus-circle me-1"></i> Nuevo Registro
             </button>
         </div>
@@ -20,10 +20,10 @@
                     <thead class="table-light">
                         <tr>
                             <th>Fecha</th>
-                            <th>Cliente / Equipo</th>
+                            <th style="min-width: 250px;">Cliente / Equipo</th>
                             <th>Contacto</th>
                             <th>Empresa</th>
-                            <th>Vendedor</th>
+                            <th>Vendedor</th> @* Columna del Vendedor *@
                             <th>Estado</th>
                             <th class="text-center">Acciones</th>
                         </tr>
@@ -46,44 +46,71 @@
                             @foreach (var item in prospectos)
                             {
                                 <tr>
-                                    <td>@item.FechaRegistro.ToShortDateString()</td>
+                                    <td>@item.FechaRegistro.ToString("dd/MM/yyyy")</td>
                                     <td>
-                                        <span class="fw-bold">@item.NombreCliente</span><br />
-                                        <small class="text-primary">@(item.NotasRecepcion ?? "Sin detalles de equipo")</small>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-bold text-dark">@item.NombreCliente</span>
+                                            @if (!string.IsNullOrEmpty(item.NotasRecepcion))
+                                            {
+                                                <small class="text-muted mt-1 p-1 bg-light border-start border-3 border-info rounded"
+                                                       style="font-size: 0.75rem; cursor: pointer;"
+                                                       @onclick="() => MostrarDetalle(item)">
+                                                    <i class="bi bi-chat-left-text text-info me-1"></i>
+                                                    @(item.NotasRecepcion.Length > 35 ? item.NotasRecepcion.Substring(0, 32) + "..." : item.NotasRecepcion)
+                                                </small>
+                                            }
+                                        </div>
                                     </td>
                                     <td>
-                                        <small><i class="bi bi-telephone"></i> @item.Telefono</small><br />
-                                        <small><i class="bi bi-envelope"></i> @item.Correo</small>
+                                        <small class="d-block"><i class="bi bi-telephone text-muted"></i> @item.Telefono</small>
+                                        <small class="d-block"><i class="bi bi-envelope text-muted"></i> @item.Correo</small>
                                     </td>
-                                    <td><span class="badge border border-primary text-primary">@item.RazonSocial</span></td>
-                                    <td>@item.NombreVendedor</td>
+                                    <td><span class="badge border border-primary text-primary fw-normal">@item.RazonSocial</span></td>
+
+                                    @* --- CORRECCIÓN COLUMNA VENDEDOR --- *@
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(item.NombreVendedor))
+                                        {
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-person-badge me-2 text-secondary"></i>
+                                                <span class="text-dark">@item.NombreVendedor</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small italic"><i>Sin asignar</i></span>
+                                        }
+                                    </td>
+
                                     <td>
                                         @if (item.Atendido)
                                         {
-                                            <span class="badge bg-success shadow-sm">
-                                                <i class="bi bi-check-circle me-1"></i> Atendido
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Atendido
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-warning text-dark shadow-sm">
-                                                <i class="bi bi-clock me-1"></i> Pendiente
+                                            <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-50 px-2">
+                                                <i class="bi bi-clock-history me-1"></i> Pendiente
                                             </span>
                                         }
                                     </td>
                                     <td class="text-center">
-                                        @if (!item.Atendido)
-                                        {
-                                            <button class="btn btn-outline-success btn-sm shadow-sm"
-                                                    @onclick="() => MarcarAtendido(item.Id)"
-                                                    disabled="@estaCargando">
-                                                <i class="bi bi-check-lg"></i> Atender
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-info" title="Ver detalle completo" @onclick="() => MostrarDetalle(item)">
+                                                <i class="bi bi-eye"></i>
                                             </button>
-                                        }
-                                        else
-                                        {
-                                            <i class="bi bi-patch-check-fill text-success fs-5" title="Atendido correctamente"></i>
-                                        }
+
+                                            @if (!item.Atendido)
+                                            {
+                                                <button class="btn btn-success btn-sm"
+                                                        @onclick="() => MarcarAtendido(item.Id)"
+                                                        disabled="@estaCargando">
+                                                    <i class="bi bi-check-lg"></i> Atender
+                                                </button>
+                                            }
+                                        </div>
                                     </td>
                                 </tr>
                             }
@@ -95,14 +122,50 @@
     </div>
 </div>
 
+@* --- MODAL DE DETALLE --- *@
+@if (prospectoSeleccionado != null)
+{
+    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fs-6"><i class="bi bi-info-circle me-2"></i>Detalles del Requerimiento</h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="() => prospectoSeleccionado = null"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="text-uppercase small fw-bold text-muted d-block">Cliente</label>
+                        <span class="h5 text-primary">@prospectoSeleccionado.NombreCliente</span>
+                    </div>
+
+                    @* Añadido Vendedor en el Modal para verificar *@
+                    <div class="mb-3">
+                        <label class="text-uppercase small fw-bold text-muted d-block">Vendedor Asignado</label>
+                        <span class="text-dark">@(string.IsNullOrEmpty(prospectoSeleccionado.NombreVendedor) ? "No asignado" : prospectoSeleccionado.NombreVendedor)</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-uppercase small fw-bold text-muted d-block">Especificaciones Técnicas</label>
+                        <div class="p-3 bg-light border-start border-4 border-info rounded text-dark mt-1" style="white-space: pre-wrap;">
+                            <i class="bi bi-quote fs-4 text-info opacity-50"></i>
+                            <em>@prospectoSeleccionado.NotasRecepcion</em>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary px-4" @onclick="() => prospectoSeleccionado = null">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private IEnumerable<ProspectoDto>? prospectos;
+    private ProspectoDto? prospectoSeleccionado;
     private bool estaCargando = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await CargarDatos();
-    }
+    protected override async Task OnInitializedAsync() => await CargarDatos();
 
     private async Task CargarDatos()
     {
@@ -113,30 +176,25 @@
         catch (Exception ex)
         {
             prospectos = new List<ProspectoDto>();
-            Console.WriteLine($"Error al cargar: {ex.Message}");
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
+
+    private void MostrarDetalle(ProspectoDto p) => prospectoSeleccionado = p;
 
     private async Task MarcarAtendido(Guid id)
     {
         if (estaCargando) return;
-
         try
         {
             estaCargando = true;
-
-            // 1. Llamada al servicio (Capa Application)
             await ProspectoService.MarcarComoAtendido(id);
-
-            // 2. Refresco de la lista local
             await CargarDatos();
-
-            // 3. Notificar cambio a la UI
             StateHasChanged();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al marcar como atendido: {ex.Message}");
+            Console.WriteLine($"Error: {ex.Message}");
         }
         finally
         {

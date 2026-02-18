@@ -1,80 +1,115 @@
 ﻿@page "/prospectos/registrar"
+@rendermode InteractiveWebAssembly
 @using Application.DTOs
 @using Application.Interfaces
 @using Domain.Enums
+@namespace VentasModulo.Client.Pages.Prospectos
 @inject IProspectoService ProspectoService
-@inject IEmpresaService EmpresaService
-@inject IUsuarioService UsuarioService
 @inject NavigationManager Navigation
 
-@* IMPORTANTE: Esta línea habilita que el C# se ejecute en el navegador. 
-   Sin esto, los botones no harán nada al hacer clic. 
-*@
-@rendermode InteractiveWebAssembly
-
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow border-0">
-                <div class="card-header bg-primary text-white py-3">
-                    <h5 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Nuevo Registro de Prospecto</h5>
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0">
+                @* Encabezado con estilo industrial/HVAC *@
+                <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Nuevo Registro de Cliente</h4>
+                    <span class="badge bg-primary px-3">Recepción</span>
                 </div>
-                <div class="card-body p-4">
-                    @* EditForm gestiona la validación y el envío. 
-                       OnValidSubmit solo se dispara si todos los campos pasan las reglas de DataAnnotations. 
-                    *@
-                    <EditForm Model="prospecto" OnValidSubmit="Guardar" FormName="formularioRegistroProspecto">
+
+                <div class="card-body p-4 bg-light">
+                    <EditForm Model="@prospecto" OnValidSubmit="Guardar">
                         <DataAnnotationsValidator />
 
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <label class="form-label fw-bold">Nombre del Cliente / Empresa 👤</label>
-                                <InputText @bind-Value="prospecto.NombreCliente" class="form-control" placeholder="Ej. Constructora Global" />
-                                <ValidationMessage For="@(() => prospecto.NombreCliente)" class="text-danger small" />
+                        <div class="row g-4">
+                            @* --- SECCIÓN: DATOS PERSONALES --- *@
+                            <div class="col-md-7 border-end">
+                                <h6 class="text-primary fw-bold mb-3"><i class="bi bi-person-vcard me-2"></i>Información de Contacto</h6>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Nombre del Cliente / Empresa</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                        <InputText @bind-Value="prospecto.NombreCliente" class="form-control" placeholder="Ej: Constructora Delta" />
+                                    </div>
+                                    <ValidationMessage For="@(() => prospecto.NombreCliente)" class="text-danger small" />
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Teléfono</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                            <InputText @bind-Value="prospecto.Telefono" class="form-control" placeholder="664..." />
+                                        </div>
+                                        <ValidationMessage For="@(() => prospecto.Telefono)" class="text-danger small" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Correo</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <InputText @bind-Value="prospecto.Correo" class="form-control" placeholder="correo@ejemplo.com" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-success">Origen del Lead</label>
+                                        <InputSelect @bind-Value="prospecto.Origen" class="form-select border-success">
+                                            @foreach (var val in Enum.GetValues(typeof(OrigenProspecto)))
+                                            {
+                                                <option value="@val">@val</option>
+                                            }
+                                        </InputSelect>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Razón Social</label>
+                                        <InputText @bind-Value="prospecto.RazonSocial" class="form-control" placeholder="Nombre para facturar" />
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Teléfono 📞</label>
-                                <InputText @bind-Value="prospecto.Telefono" class="form-control" />
-                                <ValidationMessage For="@(() => prospecto.Telefono)" class="text-danger small" />
-                            </div>
+                            @* --- SECCIÓN: ASIGNACIÓN Y NOTAS --- *@
+                            <div class="col-md-5">
+                                <h6 class="text-primary fw-bold mb-3"><i class="bi bi-clipboard-check me-2"></i>Asignación Interna</h6>
 
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Correo 📧</label>
-                                <InputText @bind-Value="prospecto.Correo" class="form-control" />
-                                <ValidationMessage For="@(() => prospecto.Correo)" class="text-danger small" />
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Vendedor Asignado</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                        <InputText @bind-Value="prospecto.NombreVendedor" class="form-control" placeholder="Nombre del vendedor" />
+                                    </div>
+                                </div>
 
-                            <hr class="my-4" />
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-primary">Empresa Destino 🏢</label>
-                                <InputSelect @bind-Value="prospecto.EmpresaId" class="form-select border-primary">
-                                    <option value="0">-- Seleccione Empresa --</option>
-                                    @foreach (var emp in empresas)
-                                    {
-                                        <option value="@emp.Id">@emp.RazonSocial</option>
-                                    }
-                                </InputSelect>
-                                <ValidationMessage For="@(() => prospecto.EmpresaId)" class="text-danger small" />
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-primary">Vendedor Asignado 🤝</label>
-                                <InputSelect @bind-Value="prospecto.VendedorId" class="form-select border-primary">
-                                    <option value="@Guid.Empty">-- Seleccione Vendedor --</option>
-                                    @foreach (var vend in vendedores)
-                                    {
-                                        <option value="@vend.Id">@vend.NombreCompleto</option>
-                                    }
-                                </InputSelect>
-                                <ValidationMessage For="@(() => prospecto.VendedorId)" class="text-danger small" />
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-info">
+                                        <i class="bi bi-chat-left-dots-fill me-1"></i>Notas de Recepción / Requerimiento
+                                    </label>
+                                    <InputTextArea @bind-Value="prospecto.NotasRecepcion"
+                                                   class="form-control shadow-sm border-info"
+                                                   rows="6"
+                                                   placeholder="Describa el equipo solicitado: Toneladas, tipo (Inverter, Paquete), marca de preferencia, urgencia de instalación..." />
+                                    <div class="form-text mt-2"><i class="bi bi-info-circle me-1"></i>Esta nota es vital para el vendedor.</div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            <button type="submit" class="btn btn-primary px-5 shadow-sm">
-                                <i class="bi bi-save me-2"></i>Guardar Registro
+                        @* --- BOTONES DE ACCIÓN --- *@
+                        <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+                            <button type="button" class="btn btn-light border px-4" @onclick='() => Navigation.NavigateTo("/prospectos/lista")'>
+                                <i class="bi bi-x-circle me-2"></i>Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-success px-5 shadow" disabled="@enviando">
+                                @if (enviando)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                    <span>Guardando...</span>
+                                }
+                                else
+                                {
+                                    <span><i class="bi bi-save2-fill me-2"></i>Finalizar Registro</span>
+                                }
                             </button>
                         </div>
                     </EditForm>
@@ -85,38 +120,44 @@
 </div>
 
 @code {
-    [SupplyParameterFromForm]
-    public ProspectoDto prospecto { get; set; } = new();
+    private ProspectoDto prospecto = new ProspectoDto();
+    private bool enviando = false;
 
-    private IEnumerable<EmpresaDto> empresas = new List<EmpresaDto>();
-    private IEnumerable<UsuarioDto> vendedores = new List<UsuarioDto>();
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        try
-        {
-            // Cargamos los catálogos desde la API
-            empresas = await EmpresaService.ObtenerEmpresasHabilitadas();
-            vendedores = await UsuarioService.ObtenerVendedoresActivos();
-        }
-        catch (Exception ex)
-        {
-            // Aquí podrías registrar el error si la API no responde
-            Console.WriteLine($"Error al cargar catálogos: {ex.Message}");
-        }
+        // Inicializar valores por defecto para evitar nulos en el DTO
+        prospecto.FechaRegistro = DateTime.Now;
+        prospecto.Atendido = false;
+        prospecto.Origen = OrigenProspecto.LlamadaTelefonica; // O el valor que prefieras por defecto
+
+        // El EmpresaId lo puedes dejar en 1 o manejarlo según tu lógica
+        prospecto.EmpresaId = 1;
     }
 
     private async Task Guardar()
     {
+        if (enviando) return;
+
         try
         {
+            enviando = true;
+
+            // Aseguramos que la fecha sea la del momento exacto del clic
+            prospecto.FechaRegistro = DateTime.Now;
+
             await ProspectoService.Crear(prospecto);
-            Navigation.NavigateTo("/"); // Redirigir al inicio tras éxito
+
+            // Regresamos a la tabla que ya tienes funcionando
+            Navigation.NavigateTo("/prospectos/lista");
         }
         catch (Exception ex)
         {
-            // Manejo simple de error para evitar el crash de la página
-            Console.WriteLine($"Error al guardar: {ex.Message}");
+            Console.WriteLine($"Error al intentar guardar: {ex.Message}");
+            // Aquí podrías agregar una notificación visual de error si tienes alguna librería de Toast
+        }
+        finally
+        {
+            enviando = false;
         }
     }
 }
