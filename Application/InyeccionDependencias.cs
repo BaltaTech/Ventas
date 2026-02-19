@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Application.Mappings;
-using Application.Interfaces; // IMPORTANTE: Agrega esto
+using Application.Interfaces; 
 using Application.Services;
 namespace Application;
 
@@ -13,7 +13,7 @@ public static class InyeccionDependencias
         // sin depender del paquete de "DependencyInjection" que causaba conflictos.
         services.AddAutoMapper(cfg =>
         {
-            cfg.AddProfile<MappingProfile>(); // Reemplaza 'MappingProfile' por el nombre de tu clase de perfiles
+            cfg.AddProfile<MappingProfile>();
         }, Assembly.GetExecutingAssembly());
 
         services.AddScoped<IProductoService, ProductoService>();

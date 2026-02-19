@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore; // <--- ESTO ES VITAL
+using Microsoft.EntityFrameworkCore; 
 
 namespace Infrastructure.Repositories;
 

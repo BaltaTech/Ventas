@@ -28,7 +28,6 @@ namespace Application.Services
             return _mapper.Map<IEnumerable<UsuarioDto>>(vendedores);
         }
 
-        // AGREGA ESTE MÉTODO PARA QUITAR EL ERROR DE INTERFAZ
         public async Task CrearVendedor(UsuarioDto usuarioDto)
         {
             // Mapeamos el DTO a la Entidad de Dominio

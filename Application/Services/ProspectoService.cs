@@ -35,7 +35,7 @@ namespace Application.Services
             // en su método GetAllAsync para que el Mapper encuentre los nombres.
             var prospectosEntities = await _repository.GetAllAsync();
 
-            // Aquí ocurre la magia: AutoMapper toma el 'Vendedor.Nombre' y lo pone en 'NombreVendedor'
+            // AAutoMapper toma el 'Vendedor.Nombre' y lo pone en 'NombreVendedor'
             return _mapper.Map<IEnumerable<ProspectoDto>>(prospectosEntities);
         }
 

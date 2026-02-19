@@ -1,7 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using AutoMapper;
-using Domain.Interfaces; // <--- ESTO LE DIRÁ DÓNDE ESTÁ IEmpresaRepository
+using Domain.Interfaces; 
 using System;
 using System.Collections.Generic;
 using System.Linq;

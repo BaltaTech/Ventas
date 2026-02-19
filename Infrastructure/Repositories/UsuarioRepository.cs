@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Persistence; // Asegúrate de que este sea el namespace de tu DbContext
+using Infrastructure.Persistence; 
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories

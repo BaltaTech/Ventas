@@ -42,11 +42,11 @@ namespace Infrastructure.Persistence
             modelBuilder.Entity<Marca>().HasKey(m => m.Id);
 
             // 5. DATOS INICIALES (Seed Data)
-            // Aquí agregamos tus dos empresas reales para evitar errores de llave foránea
+            // Aquí agregamos dos empresas reales para evitar errores de llave foránea
             modelBuilder.Entity<Empresa>().HasData(
-     new Empresa
-     {
-         Id = 1,
+            new Empresa
+                  {
+                             Id = 1,
          RazonSocial = "AYC S.A. DE C.V.",
          VendeTodasLasMarcas = false // Esta solo venderá las que le asignemos luego
      },

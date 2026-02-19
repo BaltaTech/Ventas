@@ -2,7 +2,7 @@
 {
     public class ProductoDto
     {
-        // Usamos int para coincidir con la Entidad Producto de tu Dominio
+        // Usamos int para coincidir con la Entidad Producto del Dominio
         public int Id { get; set; }
 
         // Mapeado desde 'Modelo' en la Entidad
