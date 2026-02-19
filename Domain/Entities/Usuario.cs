@@ -18,5 +18,8 @@ namespace Domain.Entities
 
         // Sincronización con Aspel para eliminar el registro manual
         public string? AspelId { get; set; }
+
+        //Contraseña Encriptada Hash
+        public string PasswordHash { get; set; } = string.Empty;
     }
 }

@@ -1,9 +1,13 @@
 ﻿using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
+using Application.Interfaces;
+using Application.Services;
+using Application.Security; // <--- Agrega esta línea para PasswordHasher y JwtProvider
+// Para que reconozca AuthService
 
 namespace Infrastructure;
 
@@ -23,6 +27,13 @@ public static class DependencyInjection
         services.AddScoped<IEmpresaRepository, EmpresaRepository>();
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
+        // Registro de Seguridad
+        services.AddSingleton<PasswordHasher>();
+        services.AddScoped<JwtProvider>();
+
+        // 2. Registro del servicio de aplicación
+        // Asegúrate de que AuthService herede de IAuthService
+        services.AddScoped<IAuthService, AuthService>();
         return services;
     }
 }
