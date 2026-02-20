@@ -18,14 +18,14 @@ public class JwtProvider
 
     public string Generate(Usuario usuario)
     {
-        // 1. Información que va dentro del token (Claims)
         var claims = new Claim[]
-        {
-            new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-            new(ClaimTypes.Email, usuario.CorreoElectronico),
-            new(ClaimTypes.Name, usuario.NombreCompleto),
-            new("EmpresaId", usuario.EmpresaId.ToString()), // <--- Vital para tus filtros
-            new("Departamento", usuario.Departamento.ToString())
+         {
+              new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+              new(ClaimTypes.Email, usuario.CorreoElectronico),
+              new(ClaimTypes.Name, usuario.NombreCompleto),
+              new("EmpresaId", usuario.EmpresaId.ToString()),
+              // Cambiamos "Departamento" por ClaimTypes.Role para que funcione [Authorize(Roles = "...")]
+              new(ClaimTypes.Role, usuario.Departamento.ToString())
         };
 
         // 2. Crear la llave secreta (la configuraremos en el siguiente paso)

@@ -1,7 +1,9 @@
-﻿@using VentasModulo.Client
+﻿@using Microsoft.AspNetCore.Components.Web
+@using VentasModulo.Client
 @using VentasModulo.Client.Layout
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
@@ -15,7 +17,13 @@
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveWebAssembly" />
+    @* EXPLICACIÓN SENIOR: 
+       Cambiamos el modo de renderizado para desactivar el 'prerender'. 
+       Esto evita que el Servidor intente instanciar el AuthApiClient, 
+       permitiendo que la página de Login se cargue directamente en el navegador (WASM).
+    *@
+    <Routes @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
+
     <script src="_framework/blazor.web.js"></script>
 </body>
 

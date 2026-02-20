@@ -1,20 +1,42 @@
 ﻿@namespace VentasModulo.Client
 @using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Authorization
 
-<Router AppAssembly="@typeof(Program).Assembly">
-    <Found Context="routeData">
-        @* Al estar en el mismo proyecto, Blazor encontrará MainLayout sin problemas *@
-        <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <LayoutView Layout="typeof(MainLayout)">
-            <div class="container mt-5 text-center">
-                <p role="alert" class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    La página no existe o fue movida.
-                </p>
-            </div>
-        </LayoutView>
-    </NotFound>
-</Router>
+@* 1. El CascadingAuthenticationState permite que todas las páginas 
+      sepan si el usuario está logueado o no *@
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            @* 2. Cambiamos RouteView por AuthorizeRouteView para proteger 
+                  las rutas que requieran login en el futuro *@
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    @* Si alguien intenta entrar a una página protegida sin loguearse *@
+                    <div class="container mt-5 text-center">
+                        <div class="alert alert-danger">
+                            <h5>No autorizado</h5>
+                            <p>Debes iniciar sesión para acceder a esta sección.</p>
+                            <a href="/login" class="btn btn-primary">Ir al Login</a>
+                        </div>
+                    </div>
+                </NotAuthorized>
+                <Authorizing>
+                    @* Mensaje mientras el sistema verifica el token *@
+                    <p class="text-center mt-5">Verificando credenciales...</p>
+                </Authorizing>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>No encontrado</PageTitle>
+            <LayoutView Layout="@typeof(Layout.MainLayout)">
+                <div class="container mt-5 text-center">
+                    <p role="alert" class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        La página no existe o fue movida.
+                    </p>
+                </div>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

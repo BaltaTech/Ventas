@@ -2,7 +2,6 @@ using Application;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models; // Ahora esto sí funcionará
 using System.Text;
 using VentasModulo.Components;

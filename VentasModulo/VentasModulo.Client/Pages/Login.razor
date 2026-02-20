@@ -1,0 +1,67 @@
+﻿@page "/login"
+@rendermode InteractiveWebAssembly
+@using Application.DTOs
+@using VentasModulo.Client.Services
+@inject AuthApiClient AuthService
+@inject NavigationManager Navigation
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg" style="width: 400px;">
+        <div class="card-body p-5">
+            <h2 class="text-center mb-4">Iniciar Sesión</h2>
+
+            <div class="mb-3">
+                <label class="form-label">Correo</label>
+                <input type="email" class="form-control" @bind="request.Correo" placeholder="admin@ayc.com" />
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-control" @bind="request.Password" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger py-2">@errorMessage</div>
+            }
+
+            <button class="btn btn-primary w-100 py-2" @onclick="ExecuteLogin" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm"></span>
+                }
+                else
+                {
+
+                    <span>Entrar</span>
+                }
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginRequestDto request = new();
+    private string? errorMessage;
+    private bool isLoading = false;
+
+    private async Task ExecuteLogin()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        var result = await AuthService.LoginAsync(request);
+
+        if (result.EsExitoso)
+        {
+            // Por ahora solo navegamos al Home.
+            // El siguiente paso será guardar el Token que viste en Swagger.
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = result.Mensaje;
+        }
+        isLoading = false;
+    }
+}
