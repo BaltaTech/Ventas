@@ -2,40 +2,27 @@
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Authorization
 
-@* 1. El CascadingAuthenticationState permite que todas las páginas 
-      sepan si el usuario está logueado o no *@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            @* 2. Cambiamos RouteView por AuthorizeRouteView para proteger 
-                  las rutas que requieran login en el futuro *@
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
                 <NotAuthorized>
-                    @* Si alguien intenta entrar a una página protegida sin loguearse *@
-                    <div class="container mt-5 text-center">
-                        <div class="alert alert-danger">
-                            <h5>No autorizado</h5>
-                            <p>Debes iniciar sesión para acceder a esta sección.</p>
-                            <a href="/login" class="btn btn-primary">Ir al Login</a>
-                        </div>
-                    </div>
+                    @if (context.User.Identity?.IsAuthenticated != true)
+                    {
+                        @* Esto es lo que hará que en lugar del error 401, te mande a /login *@
+                        <RedirectToLogin />
+                    }
+                    else
+                    {
+                        <div class="text-center mt-5"><h5>No tienes permisos.</h5></div>
+                    }
                 </NotAuthorized>
-                <Authorizing>
-                    @* Mensaje mientras el sistema verifica el token *@
-                    <p class="text-center mt-5">Verificando credenciales...</p>
-                </Authorizing>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
-            <PageTitle>No encontrado</PageTitle>
             <LayoutView Layout="@typeof(Layout.MainLayout)">
-                <div class="container mt-5 text-center">
-                    <p role="alert" class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        La página no existe o fue movida.
-                    </p>
-                </div>
+                <p class="alert alert-warning">Página no encontrada.</p>
             </LayoutView>
         </NotFound>
     </Router>

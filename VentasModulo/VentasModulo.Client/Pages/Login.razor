@@ -2,8 +2,13 @@
 @rendermode InteractiveWebAssembly
 @using Application.DTOs
 @using VentasModulo.Client.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using Blazored.LocalStorage
+
 @inject AuthApiClient AuthService
 @inject NavigationManager Navigation
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
 
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="card shadow-lg" style="width: 400px;">
@@ -32,7 +37,6 @@
                 }
                 else
                 {
-
                     <span>Entrar</span>
                 }
             </button>
@@ -54,12 +58,21 @@
 
         if (result.EsExitoso)
         {
-            // Por ahora solo navegamos al Home.
-            // El siguiente paso será guardar el Token que viste en Swagger.
+            // 1. Guardamos el Token físicamente en el navegador
+            // Esto es lo que permite que la sesión sobreviva al F5
+            await LocalStorage.SetItemAsync("authToken", result.Token);
+
+            // 2. Notificamos al sistema que el usuario ya no es anónimo
+            // Hacemos el cast a nuestra clase personalizada para usar el método de notificación
+            var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
+            customAuthStateProvider.NotifyUserAuthentication(result.Token!);
+
+            // 3. Navegamos al inicio
             Navigation.NavigateTo("/");
         }
         else
         {
+            // Este es el mensaje que ves en tu imagen cuando los datos no coinciden
             errorMessage = result.Mensaje;
         }
         isLoading = false;

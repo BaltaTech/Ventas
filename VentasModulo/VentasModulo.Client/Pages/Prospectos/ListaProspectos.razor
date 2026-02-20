@@ -1,7 +1,9 @@
 ﻿@page "/prospectos/lista"
+@attribute [Authorize]
 @rendermode InteractiveWebAssembly
 @using Application.DTOs
 @using Application.Interfaces
+@using Microsoft.AspNetCore.Authorization
 @namespace VentasModulo.Client.Pages.Prospectos
 @inject IProspectoService ProspectoService
 @inject NavigationManager Navigation

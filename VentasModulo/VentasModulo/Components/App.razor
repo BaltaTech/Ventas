@@ -13,14 +13,17 @@
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="VentasModulo.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet />
+
+    @* Sincronizamos el HeadOutlet con el mismo modo de renderizado de Routes *@
+    <HeadOutlet @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
 </head>
 
 <body>
     @* EXPLICACIÓN SENIOR: 
-       Cambiamos el modo de renderizado para desactivar el 'prerender'. 
-       Esto evita que el Servidor intente instanciar el AuthApiClient, 
-       permitiendo que la página de Login se cargue directamente en el navegador (WASM).
+       Al desactivar 'prerender', el Servidor no intenta validar la autorización 
+       ni instanciar servicios del cliente antes de tiempo. 
+       Esto permite que el navegador (WASM) tome el control total, lea el LocalStorage 
+       y decida si mostrar el Home o redirigir al Login sin lanzar errores 401.
     *@
     <Routes @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
 
