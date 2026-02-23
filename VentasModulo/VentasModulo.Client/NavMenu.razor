@@ -17,20 +17,40 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Inicio
             </NavLink>
         </div>
+
         <AuthorizeView>
             <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="prospectos/lista">Seguimiento HVAC</NavLink>
-                </div>
+                @* 1. OPCIONES PARA VENTAS Y OPERACIONES *@
+                <AuthorizeView Roles="Ventas, Operaciones" Context="innerContext">
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="prospectos/lista">
+                            <span class="bi bi-list-check" aria-hidden="true"></span> Seguimiento HVAC
+                        </NavLink>
+                    </div>
+                </AuthorizeView>
+
+                @* 2. OPCIÓN SOLO PARA ALMACEN *@
+                <AuthorizeView Roles="Almacen" Context="innerContext">
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="inventario">
+                            <span class="bi bi-box-seam" aria-hidden="true"></span> Inventario
+                        </NavLink>
+                    </div>
+                </AuthorizeView>
+
+                @* 3. BOTÓN SALIR (Visible para cualquier usuario logueado) *@
                 <div class="nav-item px-3">
                     <button class="nav-link btn btn-link text-start w-100" @onclick="CerrarSesion">
                         <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Salir
                     </button>
                 </div>
             </Authorized>
+
             <NotAuthorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="login">Iniciar Sesión</NavLink>
+                    <NavLink class="nav-link" href="login">
+                        <span class="bi bi-person-badge" aria-hidden="true"></span> Iniciar Sesión
+                    </NavLink>
                 </div>
             </NotAuthorized>
         </AuthorizeView>

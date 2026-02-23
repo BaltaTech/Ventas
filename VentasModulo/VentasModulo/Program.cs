@@ -2,14 +2,24 @@ using Application;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models; // Ahora esto sí funcionará
+using Microsoft.OpenApi.Models;
 using System.Text;
 using VentasModulo.Components;
+using Microsoft.AspNetCore.Mvc.Authorization; // Necesario para el filtro global
+using Microsoft.AspNetCore.Authorization;     // Necesario para la política
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. CONFIGURACIÓN DE SWAGGER ---
-builder.Services.AddControllers();
+// --- 1. CONFIGURACIÓN DE SWAGGER Y CONTROLADORES ---
+// Agregamos la política global aquí para que todas las APIs sean privadas por defecto
+builder.Services.AddControllers(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -37,7 +47,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// --- 2. SEGURIDAD ---
+// --- 2. SEGURIDAD Y SERVICIOS ---
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -55,6 +65,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
+// Registro de tus capas de Clean Architecture
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
@@ -71,10 +83,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+// Importante: Authentication SIEMPRE antes de Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 

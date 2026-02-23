@@ -1,5 +1,5 @@
 ﻿@page "/prospectos/lista"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Ventas, Operaciones")]
 @rendermode InteractiveWebAssembly
 @using Application.DTOs
 @using Application.Interfaces

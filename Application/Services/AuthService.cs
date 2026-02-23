@@ -47,8 +47,6 @@ public class AuthService : IAuthService
     private string GenerarJwtToken(Domain.Entities.Usuario usuario)
     {
         var jwtSettings = _config.GetSection("JwtSettings");
-
-        // Leemos directamente usando la clave entre corchetes []
         var secretKey = jwtSettings["Secret"];
         var issuer = jwtSettings["Issuer"];
         var audience = jwtSettings["Audience"];
@@ -57,13 +55,16 @@ public class AuthService : IAuthService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
-        {
+        // Lista de claims corregida con Roles
+        var claims = new List<Claim>
+    {
         new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
         new Claim(ClaimTypes.Email, usuario.CorreoElectronico),
         new Claim(ClaimTypes.Name, usuario.NombreCompleto),
         new Claim("EmpresaId", usuario.EmpresaId.ToString()),
         new Claim("Departamento", usuario.Departamento.ToString()),
+        // Claim vital para que Blazor reconozca el Rol
+        new Claim(ClaimTypes.Role, usuario.Departamento.ToString()),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
