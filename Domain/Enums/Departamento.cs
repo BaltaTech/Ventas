@@ -13,7 +13,7 @@ namespace Domain.Enums
         Almacen,
         Contabilidad,
         Proyectos, 
-        Asistencia // Seguimiento y prospeccion 
+        Asistencia 
             
     }
 }
