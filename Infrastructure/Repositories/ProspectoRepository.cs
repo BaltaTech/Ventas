@@ -20,9 +20,20 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<Prospecto>> GetAllAsync()
+        {
+            return await _context.Prospectos
+                .Include(p => p.Empresa)  
+                .Include(p => p.Vendedor) 
+                .OrderByDescending(p => p.FechaRegistro)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Prospecto>> GetByVendedorIdAsync(Guid vendedorId)
         {
             return await _context.Prospectos
+                .Include(p => p.Empresa)
+                .Include(p => p.Vendedor)
                 .Where(p => p.VendedorId == vendedorId)
                 .ToListAsync();
         }
@@ -30,8 +41,18 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Prospecto>> GetByEmpresaIdAsync(int empresaId)
         {
             return await _context.Prospectos
+                .Include(p => p.Empresa)
+                .Include(p => p.Vendedor)
                 .Where(p => p.EmpresaId == empresaId)
                 .ToListAsync();
+        }
+
+        public async Task<Prospecto?> GetByIdAsync(Guid id)
+        {
+            return await _context.Prospectos
+                .Include(p => p.Empresa)
+                .Include(p => p.Vendedor)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task UpdateAsync(Prospecto prospecto)
@@ -40,9 +61,16 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Prospecto?> GetByIdAsync(Guid id)
+        public async Task MarcarComoAtendido(Guid prospectoId)
         {
-            return await _context.Prospectos.FindAsync(id);
+            var prospecto = await _context.Prospectos.FindAsync(prospectoId);
+
+            if (prospecto != null)
+            {
+                prospecto.Atendido = true;
+                _context.Entry(prospecto).Property(x => x.Atendido).IsModified = true;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

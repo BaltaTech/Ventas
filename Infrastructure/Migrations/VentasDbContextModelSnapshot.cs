@@ -40,6 +40,20 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Empresas");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RazonSocial = "AYC S.A. DE C.V.",
+                            VendeTodasLasMarcas = false
+                        },
+                        new
+                        {
+                            Id = 2,
+                            RazonSocial = "GRUPO AYC S.A. DE C.V.",
+                            VendeTodasLasMarcas = true
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Marca", b =>
@@ -181,11 +195,15 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmpresaId");
 
-                    b.ToTable("Usuario");
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("Domain.Entities.Marca", b =>

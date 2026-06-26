@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Application.DTOs; // Para encontrar ProspectoDto
-using Domain.Entities;  // Para encontrar Prospecto
+using Application.DTOs;
+using Domain.Entities;
 
 namespace Application.Mappings
 {
@@ -9,7 +9,7 @@ namespace Application.Mappings
         public MappingProfile()
         {
             // ==========================================
-            // 1. MAPEOS DE PRODUCTO (Existentes)
+            // 1. MAPEOS DE PRODUCTO
             // ==========================================
             CreateMap<Producto, ProductoDto>()
                 .ForMember(dest => dest.Nombre, opt => opt.MapFrom(src => src.Modelo))
@@ -23,24 +23,27 @@ namespace Application.Mappings
                 .ForPath(dest => dest.Marca.Nombre, opt => opt.Ignore());
 
             // ==========================================
-            // 2. NUEVO: MAPEOS DE PROSPECTO (Sustituto de Google Sheets)
+            // 2. MAPEOS DE PROSPECTO
             // ==========================================
 
             // Entidad (DB) -> DTO (Pantalla)
             CreateMap<Prospecto, ProspectoDto>()
-                // Convertimos el Enum Origen a string (ej. "WhatsApp")
                 .ForMember(dest => dest.OrigenNombre, opt => opt.MapFrom(src => src.Origen.ToString()))
-                // Accedemos a la propiedad de navegación para obtener el nombre de la empresa
-                .ForMember(dest => dest.RazonSocial, opt => opt.MapFrom(src => src.Empresa.RazonSocial))
-                // Obtenemos el nombre del vendedor asignado
-                .ForMember(dest => dest.RazonSocial, opt => opt.MapFrom(src => src.Empresa.RazonSocial ?? "Sin Empresa"));            // DTO (Entrada de Recepción) -> Entidad (DB)
+                .ForMember(dest => dest.RazonSocial, opt => opt.MapFrom(src => src.Empresa != null ? src.Empresa.RazonSocial : "Sin Empresa"))
+                .ForMember(dest => dest.NombreVendedor, opt => opt.MapFrom(src => src.Vendedor != null ? src.Vendedor.NombreCompleto : "Sin Asignar"));
+
+            // DTO (Entrada de Recepción) -> Entidad (DB)
             CreateMap<ProspectoDto, Prospecto>()
-                // El ID y la Fecha se manejan en el servicio o DB, los ignoramos aquí
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.FechaRegistro, opt => opt.Ignore())
-                // Nos aseguramos de mapear los IDs de relación
                 .ForMember(dest => dest.EmpresaId, opt => opt.MapFrom(src => src.EmpresaId))
                 .ForMember(dest => dest.VendedorId, opt => opt.MapFrom(src => src.VendedorId));
+
+            // ==========================================
+            // 3. OTROS MAPEOS
+            // ==========================================
+            CreateMap<Empresa, EmpresaDto>();
+            CreateMap<Usuario, UsuarioDto>().ReverseMap();
         }
     }
 }

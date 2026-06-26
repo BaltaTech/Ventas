@@ -10,23 +10,20 @@ namespace Infrastructure.Persistence
         public DbSet<Marca> Marcas => Set<Marca>();
         public DbSet<Empresa> Empresas => Set<Empresa>();
         public DbSet<Producto> Productos => Set<Producto>();
-        // Agregamos Prospectos para el registro de leads
         public DbSet<Prospecto> Prospectos => Set<Prospecto>();
+        public DbSet<Usuario> Usuarios => Set<Usuario>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // 1. Configuración de Producto
+            
             modelBuilder.Entity<Producto>(entity =>
             {
                 entity.HasKey(p => p.Id);
-                // Aseguramos que el precio tenga precisión decimal para aire acondicionado
                 entity.Property(p => p.PrecioBase).HasPrecision(18, 2);
             });
 
             // 2. Relación Empresa - Prospecto
-            // Una Empresa puede tener muchos prospectos registrados
             modelBuilder.Entity<Prospecto>()
                 .HasOne(p => p.Empresa)
                 .WithMany()
@@ -34,7 +31,6 @@ namespace Infrastructure.Persistence
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 3. Relación Vendedor (Usuario) - Prospecto
-            // Un vendedor tiene asignados muchos prospectos
             modelBuilder.Entity<Prospecto>()
                 .HasOne(p => p.Vendedor)
                 .WithMany()
@@ -43,6 +39,24 @@ namespace Infrastructure.Persistence
 
             // 4. Configuración de Marca
             modelBuilder.Entity<Marca>().HasKey(m => m.Id);
+
+            // 5. DATOS INICIALES 
+            // Aquí agregamos dos empresas reales para evitar errores de llave foránea
+            modelBuilder.Entity<Empresa>().HasData(
+            new Empresa               
+            {
+                Id = 1,
+                RazonSocial = "ExlusivaTrane",
+                VendeTodasLasMarcas = false  
+                
+            },
+             new Empresa
+            {
+                Id = 2,
+                RazonSocial = "GRUPO Aire S.A. DE C.V.",
+                VendeTodasLasMarcas = true 
+            }
+            );
         }
     }
 }

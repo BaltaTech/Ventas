@@ -11,11 +11,13 @@ public static class InyeccionDependencias
     {
         services.AddAutoMapper(cfg =>
         {
-            cfg.AddProfile<MappingProfile>(); 
+            cfg.AddProfile<MappingProfile>();
         }, Assembly.GetExecutingAssembly());
 
         services.AddScoped<IProductoService, ProductoService>();
         services.AddScoped<IProspectoService, ProspectoService>(); 
+        services.AddScoped<IEmpresaService, EmpresaService>();
+        services.AddScoped<IUsuarioService, UsuarioService>();
 
         return services;
     }

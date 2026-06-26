@@ -37,7 +37,6 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // ESTE ES EL MÉTODO QUE FALTABA (Corrige el error CS0535)
         public async Task<IEnumerable<Producto>> GetProductosPorEmpresaAsync(int empresaId)
         {
             return await _context.Productos

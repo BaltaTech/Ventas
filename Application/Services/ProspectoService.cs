@@ -1,8 +1,8 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
-using Domain.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Interfaces;
 
 namespace Application.Services
 {
@@ -19,23 +19,42 @@ namespace Application.Services
 
         public async Task Crear(ProspectoDto prospectoDto)
         {
-            // Aquí ocurre la magia: convertimos el DTO a la Entidad
+            // El mapper usará la configuración de MappingProfile para asignar EmpresaId y VendedorId
             var prospecto = _mapper.Map<Prospecto>(prospectoDto);
 
-            // Asignamos la fecha actual automáticamente
+            prospecto.Id = Guid.NewGuid(); // Aseguramos el ID si no viene del cliente
             prospecto.FechaRegistro = DateTime.Now;
             prospecto.Atendido = false;
 
             await _repository.AddAsync(prospecto);
         }
 
+        public async Task<IEnumerable<ProspectoDto>> ObtenerTodos()
+        {
+            // IMPORTANTE: El repositorio DEBE incluir .Include(p => p.Vendedor) y .Include(p => p.Empresa)
+            // en su método GetAllAsync para que el Mapper encuentre los nombres.
+            var prospectosEntities = await _repository.GetAllAsync();
+
+            // AAutoMapper toma el 'Vendedor.Nombre' y lo pone en 'NombreVendedor'
+            return _mapper.Map<IEnumerable<ProspectoDto>>(prospectosEntities);
+        }
+
+        public async Task MarcarComoAtendido(Guid prospectoId)
+        {
+            await _repository.MarcarComoAtendido(prospectoId);
+        }
+
         public async Task<IEnumerable<ProspectoDto>> ObtenerPendientesPorVendedor(Guid vendedorId)
         {
             var prospectos = await _repository.GetByVendedorIdAsync(vendedorId);
-            // Solo devolvemos los que no han sido atendidos
             var pendientes = prospectos.Where(p => !p.Atendido);
-
             return _mapper.Map<IEnumerable<ProspectoDto>>(pendientes);
+        }
+
+        public async Task<IEnumerable<ProspectoDto>> ObtenerTodosPorEmpresa(int empresaId)
+        {
+            var prospectos = await _repository.GetByEmpresaIdAsync(empresaId);
+            return _mapper.Map<IEnumerable<ProspectoDto>>(prospectos);
         }
     }
 }
