@@ -14,7 +14,6 @@ namespace Application.DTOs
 
         // --- Clasificación y Origen ---
         public OrigenProspecto Origen { get; set; }
-        // Propiedad auxiliar para mostrar "WhatsApp" o "Llamada" en la tabla
         public string OrigenNombre => Origen.ToString();
 
         // --- Vinculación con Empresa (A o B) ---

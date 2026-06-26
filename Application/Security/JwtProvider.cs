@@ -24,7 +24,6 @@ public class JwtProvider
               new(ClaimTypes.Email, usuario.CorreoElectronico),
               new(ClaimTypes.Name, usuario.NombreCompleto),
               new("EmpresaId", usuario.EmpresaId.ToString()),
-              // Cambiamos "Departamento" por ClaimTypes.Role para que funcione [Authorize(Roles = "...")]
               new(ClaimTypes.Role, usuario.Departamento.ToString())
         };
 
