@@ -6,12 +6,9 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using VentasModulo.Components;
 using Microsoft.AspNetCore.Mvc.Authorization; // Necesario para el filtro global
-using Microsoft.AspNetCore.Authorization;     // Necesario para la política
+using Microsoft.AspNetCore.Authorization;     // Necesario para la polï¿½tica
 
 var builder = WebApplication.CreateBuilder(args);
-
-// --- 1. CONFIGURACIÓN DE SWAGGER Y CONTROLADORES ---
-// Agregamos la política global aquí para que todas las APIs sean privadas por defecto
 builder.Services.AddControllers(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -47,7 +44,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// --- 2. SEGURIDAD Y SERVICIOS ---
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -93,7 +89,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-// Importante: Authentication SIEMPRE antes de Authorization
+//  Authentication SIEMPRE antes de Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 

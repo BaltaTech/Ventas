@@ -1,7 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization; // Añadir este
+using Microsoft.AspNetCore.Authorization;
 
 namespace VentasModulo.Controles;
 

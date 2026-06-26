@@ -14,17 +14,11 @@
     <link rel="stylesheet" href="VentasModulo.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
 
-    @* Sincronizamos el HeadOutlet con el mismo modo de renderizado de Routes *@
     <HeadOutlet @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
 </head>
 
 <body>
-    @* EXPLICACIÓN SENIOR: 
-       Al desactivar 'prerender', el Servidor no intenta validar la autorización 
-       ni instanciar servicios del cliente antes de tiempo. 
-       Esto permite que el navegador (WASM) tome el control total, lea el LocalStorage 
-       y decida si mostrar el Home o redirigir al Login sin lanzar errores 401.
-    *@
+   
     <Routes @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
 
     <script src="_framework/blazor.web.js"></script>

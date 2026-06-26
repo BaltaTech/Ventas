@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{9AA55FC3-BA65-4186-8B3D-E62B28611D9B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VentasModulo.UnitTests", "..\..\..\source\repos\VentasModulo.UnitTests\VentasModulo.UnitTests\VentasModulo.UnitTests.csproj", "{0E95A75A-571D-B008-5D5B-84B32801783A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{9AA55FC3-BA65-4186-8B3D-E62B28611D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AA55FC3-BA65-4186-8B3D-E62B28611D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AA55FC3-BA65-4186-8B3D-E62B28611D9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E95A75A-571D-B008-5D5B-84B32801783A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E95A75A-571D-B008-5D5B-84B32801783A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E95A75A-571D-B008-5D5B-84B32801783A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E95A75A-571D-B008-5D5B-84B32801783A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
