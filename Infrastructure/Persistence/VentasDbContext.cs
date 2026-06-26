@@ -16,8 +16,7 @@ namespace Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // 1. Configuración de Producto
+            
             modelBuilder.Entity<Producto>(entity =>
             {
                 entity.HasKey(p => p.Id);
@@ -41,22 +40,23 @@ namespace Infrastructure.Persistence
             // 4. Configuración de Marca
             modelBuilder.Entity<Marca>().HasKey(m => m.Id);
 
-            // 5. DATOS INICIALES (Seed Data)
+            // 5. DATOS INICIALES 
             // Aquí agregamos dos empresas reales para evitar errores de llave foránea
             modelBuilder.Entity<Empresa>().HasData(
-            new Empresa
-                  {
-                             Id = 1,
-         RazonSocial = "AYC S.A. DE C.V.",
-         VendeTodasLasMarcas = false // Esta solo venderá las que le asignemos luego
-     },
-     new Empresa
-     {
-         Id = 2,
-         RazonSocial = "GRUPO AYC S.A. DE C.V.",
-         VendeTodasLasMarcas = true // Esta puede vender todo el catálogo general
-     }
- );
+            new Empresa               
+            {
+                Id = 1,
+                RazonSocial = "ExlusivaTrane",
+                VendeTodasLasMarcas = false  
+                
+            },
+             new Empresa
+            {
+                Id = 2,
+                RazonSocial = "GRUPO Aire S.A. DE C.V.",
+                VendeTodasLasMarcas = true 
+            }
+            );
         }
     }
 }

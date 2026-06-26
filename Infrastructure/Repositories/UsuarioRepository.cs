@@ -19,16 +19,14 @@ namespace Infrastructure.Repositories
             return await _context.Usuarios.ToListAsync();
         }
 
-        // IMPLEMENTA ESTE MÉTODO PARA QUITAR EL ERROR
         public async Task AddAsync(Usuario usuario)
         {
             await _context.Usuarios.AddAsync(usuario);
-            await _context.SaveChangesAsync(); // Importante para persistir en SQL
+            await _context.SaveChangesAsync(); 
         }
 
         public async Task<Usuario?> GetByEmailAsync(string email)
         {
-            // Buscamos al usuario e incluimos la empresa para tener el EmpresaId listo
             return await _context.Usuarios
                 .Include(u => u.Empresa)
                 .FirstOrDefaultAsync(u => u.CorreoElectronico == email);

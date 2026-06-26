@@ -9,7 +9,5 @@ public class EmpresaRepository : IEmpresaRepository
 {
     private readonly VentasDbContext _context;
     public EmpresaRepository(VentasDbContext context) => _context = context;
-
-    // Ahora ToListAsync() ya no marcará error
     public async Task<IEnumerable<Empresa>> GetAllAsync() => await _context.Empresas.ToListAsync();
 }
