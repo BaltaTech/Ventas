@@ -9,7 +9,7 @@ namespace Application.Interfaces
 {
     public interface IAuthService
     {
-        // Este método orquestará la validación y generación del token
+        // Orquesta la validación y generación del token
         Task<LoginResponseDto> Login(LoginRequestDto request);
     }
 }
